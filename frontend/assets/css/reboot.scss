@@ -1,0 +1,13 @@
+button {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+a {
+  text-decoration: none;
+}

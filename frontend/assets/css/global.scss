@@ -1,0 +1,70 @@
+@import '~element-ui/lib/theme-default/index.css';
+@import "reboot";
+@import "classes";
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "Hiragino Sans GB", "Source Han Sans CN Normal", "Microsoft YaHei", "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei, "WenQuanYi Zen Hei Sharp", sans-serif;
+
+  *,
+  *:before,
+  *:after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
+.v-modal {
+  >header {
+    .close {
+      width: 60px;
+      height: 60px;
+      padding: 20px;
+      font-size: 30px;
+      line-height: 20px;
+      text-align: center;
+    }
+  }
+
+  >footer {
+    button {
+      display: inline-block;
+      line-height: 1;
+      white-space: nowrap;
+      padding: 10px 15px;
+      font-size: 14px;
+      border-radius: 4px;
+    }
+
+    .submit {
+      margin-left: 10px;
+      color: #fff;
+      background-color: #20a0ff;
+      border-color: #20a0ff;
+
+      &:hover {
+        background: #4db3ff;
+        border-color: #4db3ff;
+      }
+    }
+
+    .cancel {
+      border: none;
+      color: #20a0ff;
+      background: transparent;
+
+      &:hover {
+        color: #4db3ff;
+      }
+    }
+  }
+}
+
+a, button {
+  cursor: pointer;
+}
