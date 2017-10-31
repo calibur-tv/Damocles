@@ -34,7 +34,7 @@ class BangumiController extends Controller
         $bangumi_id = $request->get('id');
         DB::beginTransaction();
 
-        $result = DB::table('bangumi_tag')->where('bangumi_id', $bangumi_id)->delete();
+        $result = DB::table('bangumi_tag')->withTrashed()->where('bangumi_id', $bangumi_id)->delete();
         if ($result === false)
         {
             $rollback = true;
