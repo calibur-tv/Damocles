@@ -11,11 +11,6 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-    public function __construct()
-    {
-        \View::share('menu', Menu::all());
-    }
-
     public function index()
     {
         return Auth::check() ? view('index') : view('login');
