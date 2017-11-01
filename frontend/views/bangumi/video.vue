@@ -10,7 +10,7 @@
       border
       highlight-current-row>
       <el-table-column type="expand">
-        <template scope="props">
+        <template slot-scope="props">
           <el-form label-position="left" inline>
             <div>
               <el-form-item label="视频 ID">
@@ -81,7 +81,7 @@
       <el-table-column
         width="200"
         label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button
             size="small"
             type="primary"

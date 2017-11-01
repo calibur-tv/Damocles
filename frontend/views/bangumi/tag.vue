@@ -20,13 +20,13 @@
       </el-table-column>
       <el-table-column
         label="类型">
-        <template scope="scope">
+        <template slot-scope="scope">
           {{ modelFormat(scope.row.model) }}
         </template>
       </el-table-column>
       <el-table-column
         label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button
             type="primary"
             size="small"
