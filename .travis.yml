@@ -3,7 +3,7 @@ branches:
   - master
 before_install:
 - openssl aes-256-cbc -K $encrypted_b7d425d3bc0a_key -iv $encrypted_b7d425d3bc0a_iv
-  -in id_rsa.enc -out ~\/.ssh/id_rsa -d
+  -in id_rsa.enc -out ~/.ssh/id_rsa -d
 - chmod 600 ~/.ssh/id_rsa
 - echo -e "Host 101.132.169.136\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 after_success:
