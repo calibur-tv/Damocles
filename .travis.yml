@@ -9,8 +9,6 @@ before_install:
   -in id_rsa.enc -out ~/.ssh/id_rsa -d
 - chmod 600 ~/.ssh/id_rsa
 - echo -e "Host 101.132.169.136\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-before_script:
-- composer require phpunit/phpunit
 script:
 - echo "hello world"
 after_success:
