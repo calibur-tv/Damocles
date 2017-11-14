@@ -4,6 +4,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const resolve = file => path.resolve(__dirname, file)
 const fs = require('fs')
+const isDev = process.env.NODE_ENV === 'development'
 
 const laravelMixFilePath = './public/mix-manifest.json'
 if (fs.existsSync(laravelMixFilePath)) {
@@ -41,7 +42,7 @@ module.exports = {
           {
             loader: 'vue-loader',
             options: {
-              extractCSS: true,
+              extractCSS: !isDev,
               loaders: {
                 scss: ExtractTextPlugin.extract({
                   fallback: 'vue-style-loader',
@@ -76,6 +77,15 @@ module.exports = {
           limit: 10000,
           name: '[name].[ext]?[hash:8]'
         }
+      },
+      {
+        test: /\.scss$/,
+        use: isDev
+          ? ['vue-style-loader', 'css-loader']
+          : ExtractTextPlugin.extract({
+            use: 'css-loader?minimize',
+            fallback: 'vue-style-loader'
+          })
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,

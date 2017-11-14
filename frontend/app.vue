@@ -1,6 +1,4 @@
 <style lang="scss">
-  @import "~assets/css/global.scss";
-
   #__orz {
     height: 100%;
     width: 100%;

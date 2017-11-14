@@ -1,7 +1,3 @@
-<style lang="scss" scoped="">
-
-</style>
-
 <template>
   <div>
     <h1>index page</h1>
