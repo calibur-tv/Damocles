@@ -122,7 +122,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="更新连载" :label-width="'100px'">
-              <el-switch on-text="" off-text="" v-model="editForm.update"></el-switch>
+              <el-switch v-model="editForm.update"></el-switch>
             </el-form-item>
           </el-col>
           <el-col :span="6">

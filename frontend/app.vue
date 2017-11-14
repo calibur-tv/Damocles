@@ -56,25 +56,10 @@
     components: {
       vHeader, vSideBar
     },
-    props: {
-
-    },
-    watch: {
-
-    },
-    computed: {
-
-    },
     data () {
       return {
         isCollapse: false
       }
-    },
-    methods: {
-
-    },
-    mounted () {
-
     }
   }
 </script>

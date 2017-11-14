@@ -15,7 +15,6 @@
 
 <template>
   <el-menu class="sidebar"
-           theme="dark"
            :collapse="collapse"
            :default-active="defaultActive"
            :router="true">

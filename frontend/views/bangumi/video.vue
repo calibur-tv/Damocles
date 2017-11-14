@@ -132,7 +132,7 @@
               </el-input>
             </el-col>
             <el-col :span="4" :offset="1" v-if="editForm.resource.video[720].src">
-              字幕：<el-switch on-text="" off-text="" v-model="editForm.resource.video[720].useLyc"></el-switch>
+              字幕：<el-switch v-model="editForm.resource.video[720].useLyc"></el-switch>
             </el-col>
           </el-form-item>
         </template>
@@ -144,7 +144,7 @@
               </el-input>
             </el-col>
             <el-col :span="4" :offset="1" v-if="editForm.resource.video[1080].src">
-              字幕：<el-switch on-text="" off-text="" v-model="editForm.resource.video[1080].useLyc"></el-switch>
+              字幕：<el-switch v-model="editForm.resource.video[1080].useLyc"></el-switch>
             </el-col>
           </el-form-item>
         </template>
@@ -208,7 +208,7 @@
               </el-input>
             </el-col>
             <el-col :span="4" :offset="1">
-              字幕：<el-switch on-text="" off-text="" v-model="createForm.P720.useLyc"></el-switch>
+              字幕：<el-switch v-model="createForm.P720.useLyc"></el-switch>
             </el-col>
           </el-form-item>
         </el-row>
@@ -220,7 +220,7 @@
               </el-input>
             </el-col>
             <el-col :span="4" :offset="1">
-              字幕：<el-switch on-text="" off-text="" v-model="createForm.P1080.useLyc"></el-switch>
+              字幕：<el-switch v-model="createForm.P1080.useLyc"></el-switch>
             </el-col>
           </el-form-item>
         </el-row>

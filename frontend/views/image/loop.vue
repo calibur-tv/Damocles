@@ -31,7 +31,7 @@
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
-      align-content: center;
+      align-items: center;
       padding: 10px;
     }
   }
@@ -46,7 +46,7 @@
       <div class="loop" v-for="(item, index) in filter">
         <img :src="$resize(item.url, { width: 280, height: 173 })" alt="loop">
         <div class="control">
-          <el-switch on-text="" off-text="" v-model="item.use" @change="handleSwitch(item, index)"></el-switch>
+          <el-switch v-model="item.use" @change="handleSwitch(item, index)"></el-switch>
         </div>
       </div>
     </div>
