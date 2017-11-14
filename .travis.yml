@@ -14,6 +14,7 @@ script:
 after_success:
 - ssh -p $DEPLOY_PORT $DEPLOY_USER@$DEPLOY_HOST 'cd /var/www/admin && git pull'
 - ssh -p $DEPLOY_PORT $DEPLOY_USER@$DEPLOY_HOST 'cd /var/www/admin && composer install'
+- ssh -p $DEPLOY_PORT $DEPLOY_USER@$DEPLOY_HOST 'cd /var/www/admin && npm run publish'
 env:
   global:
   - secure: acZa1tNHLHAMNo44qp4kfvSWu7yKy0neJZexkv2W3Bx2914G8ZU9GY6V4Isf+u60XufbDQDSFyPTeFAH4mpa2aJRKsjz1qPYg6wl2AkVbrki/L4vbMZFhW3162+v6ylsGnuytEbOLg3XRvXsq8ElfBjD/cdpGhBV6x1ntcl9r1EkSkwQlc/ZwkRcAjV4g8n1rsE9XJfa5FgOowXS9NI/I2jS7WWixkcATh+l/m9c4soAmPliBSc841wVr04Bf1Tf6ApeaPY4YFSbDnc/XsagRfEghL4B5oGY9a8q9BR//clb6HkopQ4waVy/pcCk+xiyDn1K6XsEfKdntRu51H+2mDSEK9iGG+bxV/8EJBVjUPFskikOw2xpv/PcRgjQqIrvuER8xgVbHNH2vaZMU2pySiCCo3vIKRBeX9ngsEpk+TRFYQQXrlHcx4WybPk/PImaJncFnyRld3oAp+cElY7hjtdU3ltLuJDHzQCdTd+8zouTX/FxwW3GW2APKRMa0OzS0qlKCDuz49dzs5Wlpc38P5hhPE52FW46tQ2Iiy/4yO5zHYN+JkYdO1gJzP1jfQEjvPOGRfFSdetG/ALg5L3pVcjbjcO9dcXgR2/z1MxKI8i3e+tNub6DGbLZ+vE7Q1hhb7CplZknsARto+vtkBKEVVazNXqoMrutmSoOTT07Fqg=
