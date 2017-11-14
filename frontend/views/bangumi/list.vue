@@ -103,7 +103,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="连载" :label-width="'60px'">
               <el-select v-model="editForm.released_at" style="width:100%" placeholder="请选择">
                 <el-option
@@ -115,14 +115,23 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="视频" :label-width="'60px'">
               <el-input v-model.trim="editForm.released_video_id" placeholder="最新视频id" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="更新连载" :label-width="'100px'">
               <el-switch on-text="" off-text="" v-model="editForm.update"></el-switch>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="上映日期">
+              <el-date-picker
+                v-model="editForm.published_at"
+                type="date"
+                placeholder="选择日期">
+              </el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
@@ -153,14 +162,14 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="21">
+          <el-col :span="10">
             <el-form-item label="头像" :label-width="'60px'">
               <el-input v-model.trim="editForm.avatar" auto-complete="off">
                 <template slot="prepend">https://cdn.riuir.com/</template>
               </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="2" :offset="1">
+          <el-col :span="1" :offset="1">
             <el-form-item>
               <el-upload
                 action="http://up.qiniu.com"
@@ -172,16 +181,14 @@
               </el-upload>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="21">
+          <el-col :span="10">
             <el-form-item label="横幅" :label-width="'60px'">
               <el-input v-model.trim="editForm.banner" auto-complete="off">
                 <template slot="prepend">https://cdn.riuir.com/</template>
               </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="2" :offset="1">
+          <el-col :span="1" :offset="1">
             <el-form-item>
               <el-upload
                 action="http://up.qiniu.com"
@@ -336,6 +343,7 @@
     season: '',
     summary: '',
     collection_id: '',
+    published_at: '',
     update: false
   }
   const defaultCreateForm = {
@@ -450,8 +458,9 @@
         })
         this.editForm.tags = tags
         this.editForm.season = row.season || defaultSeason
-        this.editForm.released_video_id = row.released_video_id || 0
-        this.editForm.collection_id = row.collection_id || 0
+        this.editForm.released_video_id = row.released_video_id || ''
+        this.editForm.collection_id = row.collection_id || ''
+        this.editForm.published_at = row.published_at ? row.published_at * 1000 : ''
         this.editForm.update = false
         this.showEditorModal = true;
       },
@@ -535,6 +544,9 @@
           }
         }
         this.editForm.alias = this.editForm.alias ? this.editForm.alias.split(/,|，/).join(',') : ''
+        this.editForm.released_video_id = this.editForm.released_video_id || 0
+        this.editForm.collection_id = this.editForm.collection_id || 0
+        this.editForm.published_at = this.editForm.published_at ? new Date(this.editForm.published_at).getTime() / 1000 : 0
         this.$http.post('/bangumi/edit', Object.assign(this.editForm, { tags, season })).then(() => {
           let newTags = [];
           for (const tag of this.tags) {

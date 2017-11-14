@@ -1,6 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const resolve = file => path.resolve(__dirname, file)
 const fs = require('fs')
 
@@ -10,7 +11,6 @@ if (fs.existsSync(laravelMixFilePath)) {
 }
 
 module.exports = {
-  // devtool: 'cheap-module-source-map',
   entry: {
     app: './frontend/entry.js',
     vendor: [
@@ -104,7 +104,10 @@ module.exports = {
     }),
     new webpack.ProvidePlugin({
 
-    })
+    }),
+    new CopyWebpackPlugin([
+      { from: resolve('./frontend/assets/img'), to: resolve('./public/assets/img') }
+    ])
   ],
   stats: {
     children: false

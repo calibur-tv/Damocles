@@ -4,7 +4,6 @@
     left: 0;
     top: 0;
     height: 100%;
-    background-color: $sidebar-color;
     width: $sidebar-collapse;
     overflow: hidden;
   }

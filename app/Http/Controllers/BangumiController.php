@@ -34,7 +34,7 @@ class BangumiController extends Controller
         $bangumi_id = $request->get('id');
         DB::beginTransaction();
 
-        $result = DB::table('bangumi_tag')->withTrashed()->where('bangumi_id', $bangumi_id)->delete();
+        $result = DB::table('bangumi_tag')->where('bangumi_id', $bangumi_id)->get();
         if ($result === false)
         {
             $rollback = true;
@@ -67,7 +67,8 @@ class BangumiController extends Controller
             'alias' => json_encode([
                 'search' => $request->get('alias')
             ]),
-            'collection_id' => $request->get('collection_id')
+            'collection_id' => $request->get('collection_id'),
+            'published_at' => $request->get('published_at')
         ];
         if ($request->get('update')) {
             $arr['published_at'] = time();

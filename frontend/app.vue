@@ -29,18 +29,6 @@
         flex-grow: 1;
       }
 
-      .el-table {
-        border: 0;
-
-        &:before, &:after {
-          background-color: transparent;
-        }
-
-        .el-table_1_column_1 {
-          border-left: 1px solid #dfe6ec;
-        }
-      }
-
       >footer {
         margin-top: 30px;
 

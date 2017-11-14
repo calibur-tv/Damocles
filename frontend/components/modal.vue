@@ -51,8 +51,8 @@
       flex-direction: column;
       overflow: hidden;
       height: auto;
-      max-height: 80%;
-      max-width: 50%;
+      max-height: 90%;
+      max-width: 90%;
 
       >header, >main, >footer {
         &:before, &:after {
