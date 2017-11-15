@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Banner;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ImageController extends Controller
 {
@@ -22,7 +24,9 @@ class ImageController extends Controller
     public function loopToggle(Request $request)
     {
         $request->get('isDelete')
-            ? Banner::find($request->get('id'))->softDeletes()
+            ? DB::table('banners')
+            ->where('id', $request->get('id'))
+            ->update(['deleted_at' => Carbon::now()])
             : Banner::withTrashed()->find($request->get('id'))->restore();
     }
 
