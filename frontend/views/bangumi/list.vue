@@ -496,7 +496,7 @@
             const name = tempSeason.name;
             const part = tempSeason.part;
             const time = tempSeason.time;
-            if (time.every(eif => /^\d{4}\.\d{1,2}$/.test(eif)) && part.some(item => typeof item !== 'number')) {
+            if (time.every(eif => /^\d{4}\.\d{1,2}$/.test(eif)) && part.every(item => typeof item === 'number')) {
               delete tempSeason.name;
               delete tempSeason.part;
               season = JSON.stringify(tempSeason)
@@ -505,14 +505,17 @@
                 this.$message.error('season 缺少 key');
                 return;
               }
+              // part 和 name 的数量对应
               if (name.length !== part.length -1 || part.length < 2) {
                 this.$message.error('season 信息不完整');
                 return;
               }
+              // part 都是数字
               if (part.some(item => typeof item !== 'number')) {
                 this.$message.error('season 的 part 必须是数字');
                 return;
               }
+              // part 格式正确
               if (!part.every((item, index, arr) => {
                   if (index) {
                     if (index === arr.length - 1) {
