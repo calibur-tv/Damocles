@@ -496,15 +496,15 @@
             const name = tempSeason.name;
             const part = tempSeason.part;
             const time = tempSeason.time;
+            if (!name || !part || !time) {
+              this.$message.error('season 缺少 key');
+              return;
+            }
             if (time.every(eif => /^\d{4}\.\d{1,2}$/.test(eif)) && part.every(item => typeof item === 'number')) {
               delete tempSeason.name;
               delete tempSeason.part;
               season = JSON.stringify(tempSeason)
             } else {
-              if (!name || !part || !time) {
-                this.$message.error('season 缺少 key');
-                return;
-              }
               // part 和 name 的数量对应
               if (name.length !== part.length -1 || part.length < 2) {
                 this.$message.error('season 信息不完整');
