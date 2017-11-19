@@ -104,7 +104,7 @@ final class Response
         if (self::isJson($headers)) {
             try {
                 $jsonData = self::bodyJson($body);
-                if ($code >=400) {
+                if ($code >= 400) {
                     $this->error = $body;
                     if ($jsonData['error'] !== null) {
                         $this->error = $jsonData['error'];
@@ -117,7 +117,7 @@ final class Response
                     $this->error = $e->getMessage();
                 }
             }
-        } elseif ($code >=400) {
+        } elseif ($code >= 400) {
             $this->error = $body;
         }
         return;
@@ -130,48 +130,7 @@ final class Response
 
     private static function bodyJson($body)
     {
-        return self::json_decode((string) $body, true, 512);
-    }
-
-    /**
-     * Wrapper for JSON decode that implements error detection with helpful
-     * error messages.
-     *
-     * @param string $json    JSON data to parse
-     * @param bool $assoc     When true, returned objects will be converted
-     *                        into associative arrays.
-     * @param int    $depth   User specified recursion depth.
-     *
-     * @return mixed
-     * @throws \InvalidArgumentException if the JSON cannot be parsed.
-     * @link http://www.php.net/manual/en/function.json-decode.php
-     */
-    static function json_decode($json, $assoc = false, $depth = 512)
-    {
-        static $jsonErrors = array(
-            JSON_ERROR_DEPTH => 'JSON_ERROR_DEPTH - Maximum stack depth exceeded',
-            JSON_ERROR_STATE_MISMATCH => 'JSON_ERROR_STATE_MISMATCH - Underflow or the modes mismatch',
-            JSON_ERROR_CTRL_CHAR => 'JSON_ERROR_CTRL_CHAR - Unexpected control character found',
-            JSON_ERROR_SYNTAX => 'JSON_ERROR_SYNTAX - Syntax error, malformed JSON',
-            JSON_ERROR_UTF8 => 'JSON_ERROR_UTF8 - Malformed UTF-8 characters, possibly incorrectly encoded'
-        );
-
-        if (empty($json)) {
-            return null;
-        }
-        $data = \json_decode($json, $assoc, $depth);
-
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            $last = json_last_error();
-            throw new \InvalidArgumentException(
-                'Unable to parse JSON data: '
-                . (isset($jsonErrors[$last])
-                    ? $jsonErrors[$last]
-                    : 'Unknown error')
-            );
-        }
-
-        return $data;
+        return \Qiniu\json_decode((string)$body, true, 512);
     }
 
     public function xVia()
@@ -204,7 +163,7 @@ final class Response
     public function needRetry()
     {
         $code = $this->statusCode;
-        if ($code< 0 || ($code / 100 === 5 and $code !== 579) || $code === 996) {
+        if ($code < 0 || ($code / 100 === 5 and $code !== 579) || $code === 996) {
             return true;
         }
     }
@@ -212,6 +171,6 @@ final class Response
     private static function isJson($headers)
     {
         return array_key_exists('Content-Type', $headers) &&
-        strpos($headers['Content-Type'], 'application/json') === 0;
+            strpos($headers['Content-Type'], 'application/json') === 0;
     }
 }

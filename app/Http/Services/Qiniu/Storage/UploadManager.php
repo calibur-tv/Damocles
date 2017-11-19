@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Http\Services\Qiniu\Storage;
 
 use App\Http\Services\Qiniu\Config;
-use App\Http\Services\Qiniu\Http\HttpClient;
 
 /**
  * 主要涉及了资源上传接口的实现
@@ -45,7 +45,8 @@ final class UploadManager
         $params = null,
         $mime = 'application/octet-stream',
         $checkCrc = false
-    ) {
+    )
+    {
         $params = self::trimParams($params);
         return FormUploader::put(
             $upToken,
@@ -83,7 +84,8 @@ final class UploadManager
         $params = null,
         $mime = 'application/octet-stream',
         $checkCrc = false
-    ) {
+    )
+    {
         $file = fopen($filePath, 'rb');
         if ($file === false) {
             throw new \Exception("file can not open", 1);

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Services\Qiniu\Storage;
 
 use App\Http\Services\Qiniu\Config;
@@ -45,7 +46,9 @@ final class ResumeUploader
         $params,
         $mime,
         $config
-    ) {
+    )
+    {
+
         $this->upToken = $upToken;
         $this->key = $key;
         $this->inputStream = $inputStream;
@@ -55,9 +58,14 @@ final class ResumeUploader
         $this->contexts = array();
         $this->config = $config;
 
-        list($upHost, $err) = $config->zone->getUpHostByToken($upToken);
+        list($accessKey, $bucket, $err) = \Qiniu\explodeUpToken($upToken);
         if ($err != null) {
-            throw new \Exception($err, 1);
+            return array(null, $err);
+        }
+
+        $upHost = $config->getUpHost($accessKey, $bucket);
+        if ($err != null) {
+            throw new \Exception($err->message(), 1);
         }
         $this->host = $upHost;
     }
@@ -81,18 +89,20 @@ final class ResumeUploader
                 $ret = $response->json();
             }
             if ($response->statusCode < 0) {
-                list($bakHost, $err) = $this->config->zone->getBackupUpHostByToken($this->upToken);
+                list($accessKey, $bucket, $err) = \Qiniu\explodeUpToken($this->upToken);
                 if ($err != null) {
                     return array(null, $err);
                 }
-                $this->host = $bakHost;
+
+                $upHostBackup = $this->config->getUpBackupHost($accessKey, $bucket);
+                $this->host = $upHostBackup;
             }
             if ($response->needRetry() || !isset($ret['crc32']) || $crc != $ret['crc32']) {
                 $response = $this->makeBlock($data, $blockSize);
                 $ret = $response->json();
             }
 
-            if (! $response->ok() || !isset($ret['crc32'])|| $crc != $ret['crc32']) {
+            if (!$response->ok() || !isset($ret['crc32']) || $crc != $ret['crc32']) {
                 return array(null, new Error($this->currentUrl, $response));
             }
             array_push($this->contexts, $ret['ctx']);
@@ -119,7 +129,7 @@ final class ResumeUploader
         }
         if (!empty($this->params)) {
             foreach ($this->params as $key => $value) {
-                $val =  \Qiniu\base64_urlSafeEncode($value);
+                $val = \Qiniu\base64_urlSafeEncode($value);
                 $url .= "/$key/$val";
             }
         }
@@ -137,7 +147,7 @@ final class ResumeUploader
         if ($response->needRetry()) {
             $response = $this->post($url, $body);
         }
-        if (! $response->ok()) {
+        if (!$response->ok()) {
             return array(null, new Error($this->currentUrl, $response));
         }
         return array($response->json(), null);
@@ -155,6 +165,6 @@ final class ResumeUploader
         if ($this->size < $uploaded + Config::BLOCK_SIZE) {
             return $this->size - $uploaded;
         }
-        return  Config::BLOCK_SIZE;
+        return Config::BLOCK_SIZE;
     }
 }
