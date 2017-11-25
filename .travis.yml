@@ -16,21 +16,21 @@ deploy:
   - provider: script
     skip_cleanup: true
     script:
-      ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/api && git pull' &&
-      ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/api && composer install' &&
-      ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/api && npm install' &&
-      ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/api && npm run build' &&
-      ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/api && npm run publish'
+      ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/admin && git pull' &&
+      ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/admin && composer install' &&
+      ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/admin && npm install' &&
+      ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/admin && npm run build' &&
+      ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/admin && npm run publish'
     on:
       branch: master
   - provider: script
     skip_cleanup: true
     script:
-      ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/api && git pull' &&
-      ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/api && composer install' &&
-      ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/api && npm install' &&
-      ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/api && npm run build' &&
-      ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/api && npm run publish'
+      ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/admin && git pull' &&
+      ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/admin && composer install' &&
+      ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/admin && npm install' &&
+      ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/admin && npm run build' &&
+      ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/admin && npm run publish'
     on:
       branch: deploy
 
