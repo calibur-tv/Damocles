@@ -19,10 +19,10 @@
             </div>
             <div>
               <el-form-item label="横幅">
-                <span v-text="`https://cdn.riuir.com/${props.row.banner}`"></span>
+                <span v-text="`https://image.calibur.tv/${props.row.banner}`"></span>
               </el-form-item>
               <el-form-item label="头像">
-                <span v-text="`https://cdn.riuir.com/${props.row.avatar}`"></span>
+                <span v-text="`https://image.calibur.tv/${props.row.avatar}`"></span>
               </el-form-item>
             </div>
             <div v-if="props.row.tags.length">
@@ -165,7 +165,7 @@
           <el-col :span="10">
             <el-form-item label="头像" :label-width="'60px'">
               <el-input v-model.trim="editForm.avatar" auto-complete="off">
-                <template slot="prepend">https://cdn.riuir.com/</template>
+                <template slot="prepend">https://image.calibur.tv/</template>
               </el-input>
             </el-form-item>
           </el-col>
@@ -184,7 +184,7 @@
           <el-col :span="10">
             <el-form-item label="横幅" :label-width="'60px'">
               <el-input v-model.trim="editForm.banner" auto-complete="off">
-                <template slot="prepend">https://cdn.riuir.com/</template>
+                <template slot="prepend">https://image.calibur.tv/</template>
               </el-input>
             </el-form-item>
           </el-col>
@@ -258,7 +258,7 @@
                         }"
                         placeholder="头像，2M 以内的jpg, png"
                         auto-complete="off">
-                <template slot="prepend">https://cdn.riuir.com/</template>
+                <template slot="prepend">https://image.calibur.tv/</template>
               </el-input>
             </el-form-item>
           </el-col>
@@ -285,7 +285,7 @@
                         }"
                         placeholder="横幅，2M 以内的jpg, png"
                         auto-complete="off">
-                <template slot="prepend">https://cdn.riuir.com/</template>
+                <template slot="prepend">https://image.calibur.tv/</template>
               </el-input>
             </el-form-item>
           </el-col>
@@ -416,7 +416,7 @@
           token: '',
           key: ''
         },
-        CDNPrefixp: 'https://cdn.riuir.com/',
+        CDNPrefix: 'https://image.calibur.tv/',
         loading: true
       }
     },
@@ -607,8 +607,8 @@
           if (result) {
             this.$http.post('/bangumi/create', {
               name: this.createForm.name,
-              avatar: this.createForm.avatar.replace(this.CDNPrefixp, ''),
-              banner: this.createForm.banner.replace(this.CDNPrefixp, ''),
+              avatar: this.createForm.avatar.replace(this.CDNPrefix, ''),
+              banner: this.createForm.banner.replace(this.CDNPrefix, ''),
               alias: this.createForm.alias.split(/,|，/).join(','),
               summary: this.createForm.summary
             }).then((data) => {

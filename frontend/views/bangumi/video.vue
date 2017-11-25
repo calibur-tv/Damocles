@@ -22,7 +22,7 @@
             </div>
             <div>
               <el-form-item label="海报">
-                <span style="cursor: pointer;" v-text="`https://cdn.riuir.com/${props.row.poster}`" @click="preview(props.row.poster)"></span>
+                <span style="cursor: pointer;" v-text="`https://image.calibur.tv/${props.row.poster}`" @click="preview(props.row.poster)"></span>
               </el-form-item>
             </div>
             <div>
@@ -128,7 +128,7 @@
           <el-form-item label="720P 资源" :label-width="'85px'">
             <el-col :span="18">
               <el-input v-model.trim="editForm.resource.video[720].src" auto-complete="off">
-                <template slot="prepend">https://cdn.riuir.com/</template>
+                <template slot="prepend">https://video.calibur.tv/</template>
               </el-input>
             </el-col>
             <el-col :span="4" :offset="1" v-if="editForm.resource.video[720].src">
@@ -140,7 +140,7 @@
           <el-form-item label="1080P 资源" :label-width="'85px'">
             <el-col :span="18">
               <el-input v-model.trim="editForm.resource.video[1080].src" auto-complete="off">
-                <template slot="prepend">https://cdn.riuir.com/</template>
+                <template slot="prepend">https://video.calibur.tv/</template>
               </el-input>
             </el-col>
             <el-col :span="4" :offset="1" v-if="editForm.resource.video[1080].src">
@@ -148,20 +148,18 @@
             </el-col>
           </el-form-item>
         </template>
-        <el-form-item label="外链资源" :label-width="'85px'">
-          <el-input v-model.trim="editForm.url" auto-complete="off">
-            <template slot="prepend">https://cdn.riuir.com/</template>
-          </el-input>
-        </el-form-item>
         <el-form-item label="海报" :label-width="'85px'">
           <el-input v-model.trim="editForm.poster" auto-complete="off">
-            <template slot="prepend">https://cdn.riuir.com/</template>
+            <template slot="prepend">https://image.calibur.tv/</template>
           </el-input>
         </el-form-item>
         <el-form-item label="字幕" :label-width="'85px'">
           <el-input v-model.trim="editForm.resource.lyric.zh" auto-complete="off">
-            <template slot="prepend">https://cdn.riuir.com/</template>
+            <template slot="prepend">https://video.calibur.tv/</template>
           </el-input>
+        </el-form-item>
+        <el-form-item label="外链资源" :label-width="'85px'">
+          <el-input v-model.trim="editForm.url" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
     </v-modal>
@@ -204,7 +202,7 @@
           <el-form-item label="720P 资源" :label-width="'85px'">
             <el-col :span="18">
               <el-input v-model.trim="createForm.P720.src" auto-complete="off">
-                <template slot="prepend">https://cdn.riuir.com/</template>
+                <template slot="prepend">https://video.calibur.tv/</template>
               </el-input>
             </el-col>
             <el-col :span="4" :offset="1">
@@ -216,7 +214,7 @@
           <el-form-item label="1080P 资源" :label-width="'85px'">
             <el-col :span="18">
               <el-input v-model.trim="createForm.P1080.src" auto-complete="off">
-                <template slot="prepend">https://cdn.riuir.com/</template>
+                <template slot="prepend">https://video.calibur.tv/</template>
               </el-input>
             </el-col>
             <el-col :span="4" :offset="1">
@@ -224,23 +222,21 @@
             </el-col>
           </el-form-item>
         </el-row>
-        <el-form-item v-if="!createForm.P720.show && !createForm.P1080.show" label="外链资源" :label-width="'85px'">
-          <el-input v-model.trim="createForm.url" auto-complete="off">
-            <template slot="prepend">https://cdn.riuir.com/</template>
-          </el-input>
-        </el-form-item>
         <el-form-item label="海报" :label-width="'85px'">
           <el-input v-model.trim="createForm.poster" auto-complete="off">
-            <template slot="prepend">https://cdn.riuir.com/</template>
+            <template slot="prepend">https://image.calibur.tv/</template>
           </el-input>
         </el-form-item>
         <el-form-item v-if="createForm.P720.useLyc || createForm.P1080.useLyc" label="字幕" :label-width="'85px'">
           <el-input v-model.trim="createForm.lyric.zh" auto-complete="off">
-            <template slot="prepend">https://cdn.riuir.com/</template>
+            <template slot="prepend">https://video.calibur.tv/</template>
           </el-input>
         </el-form-item>
         <el-form-item label="名称" :label-width="'85px'">
           <el-input v-model.trim="createForm.name" type="textarea" placeholder="一行一个" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item v-if="!createForm.P720.show && !createForm.P1080.show" label="外链资源" :label-width="'85px'">
+          <el-input v-model.trim="createForm.url" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
     </v-modal>
@@ -331,7 +327,7 @@
           resource: defaultResource
         },
         createForm: defaultCreateForm,
-        CDNPrefixp: 'https://cdn.riuir.com/'
+        CDNPrefix: 'https://image.calibur.tv/'
       }
     },
     created () {
@@ -365,7 +361,7 @@
       },
       preview(url) {
         if (url) {
-          window.open(`${this.CDNPrefixp}${url}`)
+          window.open(`${this.CDNPrefix}${url}`)
         }
       },
       computedBangumiId(bname) {

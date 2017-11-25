@@ -79,7 +79,7 @@
                         scope: 'create-loop'
                       }"
                       auto-complete="off"
-            ><template slot="prepend">https://cdn.riuir.com/</template>
+            ><template slot="prepend">https://image.calibur.tv/</template>
             </el-input>
           </el-form-item>
         </el-col>
