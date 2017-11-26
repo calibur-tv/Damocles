@@ -133,7 +133,7 @@
       },
       close: {
         type: Boolean,
-        default: true
+        default: false
       },
       header: {
         type: Boolean,

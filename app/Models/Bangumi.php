@@ -21,14 +21,16 @@ class Bangumi extends Model
         'published_at',
         'count_like',
         'count_score',
-        'collection_id'
+        'collection_id',
+        'others_site_video'
     ];
 
     protected $casts = [
         'released_at' => 'integer',
         'released_video_id' => 'integer',
         'published_at' => 'integer',
-        'collection_id' => 'integer'
+        'collection_id' => 'integer',
+        'others_site_video' => 'integer'
     ];
 
     public function tags()
