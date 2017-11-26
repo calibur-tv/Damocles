@@ -68,7 +68,8 @@ class BangumiController extends Controller
                 'search' => $request->get('alias')
             ]),
             'collection_id' => $request->get('collection_id'),
-            'published_at' => $request->get('published_at')
+            'published_at' => $request->get('published_at'),
+            'others_site_video' => $request->get('others_site_video')
         ];
         if ($request->get('update')) {
             $arr['published_at'] = time();
