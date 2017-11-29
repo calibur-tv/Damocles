@@ -295,7 +295,6 @@
     poster: 'bangumi/${name}/poster/${n}.jpg',
   }
   export default {
-    name: 'v-page-bangumi-video',
     computed: {
       filter () {
         const begin = (this.pagination.curPage - 1) * this.pagination.pageSize;

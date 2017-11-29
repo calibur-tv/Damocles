@@ -13,19 +13,49 @@ class BangumiController extends Controller
 {
     public function create(Request $request)
     {
-        return Bangumi::insertGetId([
+        $bangumi_id = Bangumi::insertGetId([
             'name' => $request->get('name'),
             'avatar' => $request->get('avatar'),
             'banner' => $request->get('banner'),
             'summary' => $request->get('summary'),
-            'alias' => json_encode([
+            'released_at' => $request->get('released_at'),
+            'released_video_id' => $request->get('released_video_id'),
+            'season' => $request->get('season') ? $request->get('season') : 'null',
+            'alias' => $request->get('alias') ? json_encode([
                 'search' => $request->get('alias')
-            ]),
-            'season' => 'null',
-            'count_score' => 0,
-            'collection_id' => 0,
+            ]) : 'null',
+            'collection_id' => $request->get('collection_id'),
+            'published_at' => $request->get('published_at'),
+            'others_site_video' => $request->get('others_site_video'),
             'deleted_at' => Carbon::now()
         ]);
+
+        $tags = [];
+        foreach($request->get('tags') as $i => $tag_id)
+        {
+            array_push($tags, [
+                'bangumi_id' => $bangumi_id,
+                'tag_id' => $tag_id
+            ]);
+        }
+        DB::table('bangumi_tag')->insert($tags);
+    }
+
+    public function item(Request $request)
+    {
+        $id = $request->get('id');
+
+        $bangumi = Bangumi::withTrashed()->find($id);
+        $bangumi['alias'] = $bangumi['alias'] === 'null' ? '' : json_decode($bangumi['alias'])->search;
+        $bangumi['tags'] = $bangumi->tags()->get()->pluck('id');
+        $bangumi['season'] = $bangumi['season'] === 'null' ? '' : $bangumi['season'];
+        $bangumi['published_at'] = $bangumi['published_at'] * 1000;
+
+        return [
+            'bangumi' => $bangumi,
+            'tags' => Tag::where('model', 0)->select('id', 'name')->get(),
+            'collections' => BangumiCollection::select('id', 'name', 'title')->get()
+        ];
     }
 
     public function edit(Request $request)
@@ -55,25 +85,21 @@ class BangumiController extends Controller
         }
 
         $bangumi = Bangumi::where('id', $bangumi_id)->first();
-        $released_video_id = $request->get('released_video_id');
         $arr = [
             'name' => $request->get('name'),
             'avatar' => $request->get('avatar'),
             'banner' => $request->get('banner'),
             'summary' => $request->get('summary'),
             'released_at' => $request->get('released_at'),
-            'released_video_id' => $released_video_id,
+            'released_video_id' => $request->get('released_video_id'),
             'season' => $request->get('season') ? $request->get('season') : 'null',
-            'alias' => json_encode([
+            'alias' => $request->get('alias') ? json_encode([
                 'search' => $request->get('alias')
-            ]),
+            ]) : 'null',
             'collection_id' => $request->get('collection_id'),
             'published_at' => $request->get('published_at'),
             'others_site_video' => $request->get('others_site_video')
         ];
-        if ($request->get('update')) {
-            $arr['published_at'] = time();
-        }
 
         $result = $bangumi->update($arr);
         if ($result === false)
@@ -93,19 +119,6 @@ class BangumiController extends Controller
 
     public function list()
     {
-        $bangumis = Bangumi::withTrashed()->get();
-
-        foreach ($bangumis as $row)
-        {
-            $row['alias'] = $row['alias'] === 'null' ? '' : json_decode($row['alias'])->search;
-            $row['tags'] = $row->tags()->get();
-            $row['season'] = $row['season'] === 'null' ? '' : $row['season'];
-        }
-
-        return [
-            'bangumis' => $bangumis,
-            'tags' => Tag::where('model', 0)->select('id', 'name')->get(),
-            'collections' => BangumiCollection::select('id', 'name', 'title')->get()
-        ];
+        return Bangumi::withTrashed()->select('id', 'name')->get();
     }
 }

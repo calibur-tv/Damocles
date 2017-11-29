@@ -29,7 +29,6 @@
     password: ''
   }
   export default {
-    name: 'v-admin-user',
     components: {
 
     },

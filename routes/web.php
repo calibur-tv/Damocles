@@ -23,6 +23,8 @@ Route::group(['middleware' => ['auth']], function ()
 
         Route::get('/tags', 'TagController@list');
 
+        Route::get('/item', 'BangumiController@item');
+
         Route::get('/videos', 'VideoController@list');
 
         Route::post('/create', 'BangumiController@create');

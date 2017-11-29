@@ -1,4 +1,6 @@
 <style lang="scss">
+  @import "assets/css/global";
+
   #__orz {
     height: 100%;
     width: 100%;
@@ -21,6 +23,10 @@
 
       >header {
         margin-bottom: 20px;
+
+        .el-breadcrumb {
+          margin-left: 30px;
+        }
       }
 
       .main-view {
@@ -52,13 +58,13 @@
   import vHeader from 'component/layouts/Header'
 
   export default {
-    name: 'v-index',
     components: {
       vHeader, vSideBar
     },
     data () {
       return {
-        isCollapse: false
+        isCollapse: false,
+        breadcrumb: []
       }
     }
   }

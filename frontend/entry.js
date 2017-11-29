@@ -7,7 +7,6 @@ import Element from 'element-ui'
 import Modal from 'component/modal'
 import './utils/validate'
 import 'lodash'
-import 'assets/css/global.scss'
 
 Vue.use(Element)
 Vue.use(Helpers)
