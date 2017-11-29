@@ -5,24 +5,17 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    login : null
+    breadcrumb: []
   },
-
   mutations: {
-    SET_LOGIN (state, { bool }) {
-      state.login = bool
+    set_breadcrumb (state, data) {
+      state.breadcrumb = data
     }
   },
-
-  actions: {
-    setLogin: ({ commit }, { bool }) => {
-      commit('SET_LOGIN', { bool })
-    }
-  },
-
+  actions: {},
   getters: {
-    isLogin: state => {
-      return state.login
+    get_breadcrumb: state => {
+      return state.breadcrumb
     }
   }
 })

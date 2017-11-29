@@ -38,9 +38,19 @@ export default new Router({
       component: require('view/bangumi/collection').default
     },
     {
-      path: '/bangumi/video',
-      name: '番剧视频',
-      component: require('view/bangumi/video').default
+      path: '/bangumi/create',
+      name: '创建番剧',
+      component: require('view/bangumi/show').default
+    },
+    {
+      path: '/bangumi/edit/:id(\\d+)',
+      name: '编辑番剧',
+      component: require('view/bangumi/show').default
+    },
+    {
+      path: '/video/list',
+      name: '视频列表',
+      component: require('view/video/list').default
     },
     {
       path: '/admin/user',

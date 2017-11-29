@@ -12,11 +12,6 @@
       height: $header-height;
     }
 
-    .breadcrumb {
-      color: #97a8be;
-      line-height: $header-height;
-    }
-
     .user-panel {
       float: right;
 
@@ -24,6 +19,8 @@
         width: 40px;
         height: 40px;
         border-radius: 10px;
+        float: left;
+        margin-top: 10px;
       }
     }
   }
@@ -35,7 +32,6 @@
       <button class="collapse-btn" :class="[ collapse ? 'el-icon-d-arrow-right' : 'el-icon-d-arrow-left' ]" @click="toggleCollapse">
       </button>
     </el-menu-item>
-    <span class="breadcrumb" v-text="breadcrumb"></span>
     <el-submenu class="user-panel" index="9">
       <template slot="title">
         <img class="avatar" src="~assets/img/avatar.gif" alt="avatar">
@@ -48,26 +44,7 @@
 <script>
   export default {
     name: 'v-header',
-    components: {
-
-    },
     props: ['collapse'],
-    watch: {
-      '$route' (router) {
-        this.breadcrumb = router.name
-      }
-    },
-    computed: {
-
-    },
-    data () {
-      return {
-        breadcrumb: this.$route.name
-      }
-    },
-    created () {
-
-    },
     methods: {
       toggleCollapse () {
         this.$emit('update:collapse', !this.collapse)
@@ -75,9 +52,6 @@
       logout () {
         this.$http.post('/auth/logout').then(() => window.location = '/')
       }
-    },
-    mounted () {
-
     }
   }
 </script>

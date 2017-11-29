@@ -82,7 +82,6 @@
 
 <script>
   export default {
-    name: 'v-page-bangumi-tag',
     computed: {
       filter () {
         const begin = (this.pagination.curPage - 1) * this.pagination.pageSize;

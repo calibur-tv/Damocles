@@ -38,21 +38,20 @@
         <i class="el-icon-star-on"></i>
         <span slot="title">番剧</span>
       </template>
-      <el-menu-item-group title="番剧">
-        <el-menu-item index="/bangumi/list">番剧列表</el-menu-item>
-      </el-menu-item-group>
-      <el-menu-item-group title="标签">
-        <el-menu-item index="/bangumi/tag">标签列表</el-menu-item>
-      </el-menu-item-group>
-      <el-menu-item-group title="合集">
-        <el-menu-item index="/bangumi/collection">合集列表</el-menu-item>
-      </el-menu-item-group>
-      <el-menu-item-group title="视频">
-        <el-menu-item index="/bangumi/video">视频列表</el-menu-item>
-      </el-menu-item-group>
+      <el-menu-item index="/bangumi/list">番剧列表</el-menu-item>
+      <el-menu-item index="/bangumi/tag">标签列表</el-menu-item>
+      <el-menu-item index="/bangumi/collection">合集列表</el-menu-item>
     </el-submenu>
 
     <el-submenu index="3">
+      <template slot="title">
+        <i class="el-icon-service"></i>
+        <span slot="title">视频</span>
+      </template>
+      <el-menu-item index="/video/list">视频列表</el-menu-item>
+    </el-submenu>
+
+    <el-submenu index="4">
       <template slot="title">
         <i class="el-icon-setting"></i>
         <span slot="title">设置</span>

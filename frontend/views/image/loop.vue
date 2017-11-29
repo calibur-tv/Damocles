@@ -119,7 +119,6 @@
     bangumiId: ''
   }
   export default {
-    name: 'v-page-image-loop',
     computed: {
       filter () {
         const begin = (this.pagination.curPage - 1) * this.pagination.pageSize;
