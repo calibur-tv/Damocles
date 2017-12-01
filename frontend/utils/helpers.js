@@ -53,5 +53,7 @@ export default {
         return `http://www.calibur.dev/${url}`
       }
     }
+
+    Vue.prototype.$CDNPrefix = 'https://image.calibur.tv/'
   }
 }

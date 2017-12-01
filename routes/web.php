@@ -52,6 +52,8 @@ Route::group(['middleware' => ['auth']], function ()
         Route::post('/edit', 'VideoController@edit');
 
         Route::post('/delete', 'VideoController@delete');
+
+        Route::post('/upload', 'VideoController@upload');
     });
 
     Route::group(['prefix' => 'banner'], function ()
