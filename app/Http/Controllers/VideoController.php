@@ -63,4 +63,30 @@ class VideoController extends Controller
             'bangumis' => Bangumi::withTrashed()->select('id', 'name', 'deleted_at')->get()
         ];
     }
+
+    public function upload(Request $request)
+    {
+        $bangumiId = $request->get('bangumiId');
+        $part = $request->get('part');
+        $url = $request->get('url') || '';
+        $id = Video::whereRaw('bangumi_id = ? and part = ?', [$bangumiId, $part])->select('id')->first();
+        if (is_null($id)) {
+            Video::create([
+                'bangumi_id' => $bangumiId,
+                'part' => $part,
+                'name' => $request->get('name'),
+                'url' => $url,
+                'resource' => json_encode($request->get('resource')),
+                'poster' => $request->get('poster'),
+                'deleted_at' => $request->get('deleted_at')
+            ]);
+        } else {
+            Video::where('id', $id)->update([
+                'name' => $request->get('name'),
+                'url' => $url,
+                'resource' => json_encode($request->get('resource')),
+                'poster' => $request->get('poster')
+            ]);
+        }
+    }
 }

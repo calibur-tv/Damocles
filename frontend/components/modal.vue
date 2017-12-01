@@ -101,12 +101,12 @@
 <template>
   <transition name="modal">
     <section class="v-modal-wrap" v-if="toggle">
-      <div class="v-modal-mask" @click="handleClose"></div>
+      <div class="v-modal-mask" @click="handleCancel"></div>
       <div class="v-modal" @click>
         <header v-if="header">
           <slot name="header">
             <h4 v-text="headerText"></h4>
-            <a v-if="close" class="close" @click="handleClose">&times;</a>
+            <a v-if="close" class="close" @click="handleCancel">&times;</a>
           </slot>
         </header>
         <main>
@@ -170,15 +170,12 @@
       };
     },
     methods: {
-      handleClose() {
-        this.toggle = false;
-      },
       handleSubmit() {
         this.$emit('submit');
       },
       handleCancel() {
         this.$emit('cancel');
-        this.handleClose();
+        this.toggle = false;
       }
     }
   };

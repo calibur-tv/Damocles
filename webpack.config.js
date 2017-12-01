@@ -109,11 +109,12 @@ module.exports = {
         )
       }
     }),
+    new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(zh-cn)$/),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest'
     }),
     new webpack.ProvidePlugin({
-
+      moment: 'moment'
     }),
     new CopyWebpackPlugin([
       { from: resolve('./frontend/assets/img'), to: resolve('./public/assets/img') }

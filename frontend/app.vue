@@ -33,6 +33,18 @@
         flex-grow: 1;
       }
 
+      .el-select {
+        width: 100%;
+      }
+
+      .el-slider__button-wrapper {
+        line-height: 36px;
+      }
+
+      .el-tooltip {
+        box-sizing: content-box;
+      }
+
       >footer {
         margin-top: 30px;
 

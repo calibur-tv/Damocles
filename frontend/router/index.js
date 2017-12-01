@@ -53,6 +53,11 @@ export default new Router({
       component: require('view/video/list').default
     },
     {
+      path: '/video/create',
+      name: '新建视频',
+      component: require('view/video/create').default
+    },
+    {
       path: '/admin/user',
       name: '管理员',
       component: require('view/admin/user').default

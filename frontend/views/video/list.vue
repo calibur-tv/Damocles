@@ -1,7 +1,9 @@
 <template>
   <section>
     <header>
-      <el-button type="primary" icon="plus" size="large" @click="showCreateModal = true">新建视频</el-button>
+      <router-link to="/video/create">
+        <el-button type="primary" icon="plus" size="large">新建视频</el-button>
+      </router-link>
     </header>
     <el-table
       :data="filter"
@@ -9,57 +11,17 @@
       v-loading="loading"
       border
       highlight-current-row>
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-form label-position="left" inline>
-            <div>
-              <el-form-item label="视频 ID">
-                <span v-text="props.row.id"></span>
-              </el-form-item>
-              <el-form-item label="番剧 ID">
-                <span v-html="props.row.bangumi_id"></span>
-              </el-form-item>
-            </div>
-            <div>
-              <el-form-item label="海报">
-                <span style="cursor: pointer;" v-text="`https://image.calibur.tv/${props.row.poster}`" @click="preview(props.row.poster)"></span>
-              </el-form-item>
-            </div>
-            <div>
-              <el-form-item label="播放量">
-                <span v-text="props.row.count_played"></span>
-              </el-form-item>
-              <el-form-item label="评论数">
-                <span v-text="props.row.count_comment"></span>
-              </el-form-item>
-            </div>
-            <div>
-              <el-form-item label="创建时间">
-                <span v-text="props.row.created_at"></span>
-              </el-form-item>
-              <el-form-item label="更新时间">
-                <span v-text="props.row.updated_at"></span>
-              </el-form-item>
-              <el-form-item v-if="props.row.deleted_at" label="删除时间">
-                <span v-text="props.row.deleted_at"></span>
-              </el-form-item>
-            </div>
-          </el-form>
+      <el-table-column
+        label="番名">
+        <template slot-scope="scope">
+          <a :href="$href(`bangumi/${scope.row.bangumi_id}`)" target="_blank">{{ scope.row.bname }}</a>
         </template>
       </el-table-column>
       <el-table-column
-        prop="id"
-        sortable
-        width="100"
-        label="索引">
-      </el-table-column>
-      <el-table-column
-        prop="bname"
-        label="番名">
-      </el-table-column>
-      <el-table-column
-        prop="name"
         label="名称">
+        <template slot-scope="scope">
+          <a :href="$href(`video/${scope.row.id}`)" target="_blank">{{ scope.row.name }}</a>
+        </template>
       </el-table-column>
       <el-table-column
         prop="part"
@@ -163,83 +125,6 @@
         </el-form-item>
       </el-form>
     </v-modal>
-    <v-modal class="video-create-modal"
-             v-model="showCreateModal"
-             :header-text="'新建视频'"
-             @submit="handleCreateDone">
-      <el-form :model="createForm">
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="番剧" :label-width="'85px'">
-              <el-select v-model="createForm.bname" placeholder="请选择">
-                <el-option
-                  v-for="item in bangumis"
-                  :key="item.id"
-                  :value="item.name"
-                  :disabled="!!item.deleted_at">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="集数" :label-width="'85px'">
-              <el-input v-model.trim="createForm.part" placeholder="m-n" auto-complete="off"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="名称" :label-width="'85px'">
-              <el-input v-model.trim="createForm.bangumiEnglishName" placeholder="${name}" auto-complete="off"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="画质" :label-width="'85px'">
-          <div>
-            <el-checkbox v-model="createForm.P720.show">720P</el-checkbox>
-            <el-checkbox v-model="createForm.P1080.show">1080P</el-checkbox>
-          </div>
-        </el-form-item>
-        <el-row v-if="createForm.P720.show">
-          <el-form-item label="720P 资源" :label-width="'85px'">
-            <el-col :span="18">
-              <el-input v-model.trim="createForm.P720.src" auto-complete="off">
-                <template slot="prepend">https://video.calibur.tv/</template>
-              </el-input>
-            </el-col>
-            <el-col :span="4" :offset="1">
-              字幕：<el-switch v-model="createForm.P720.useLyc"></el-switch>
-            </el-col>
-          </el-form-item>
-        </el-row>
-        <el-row v-if="createForm.P1080.show">
-          <el-form-item label="1080P 资源" :label-width="'85px'">
-            <el-col :span="18">
-              <el-input v-model.trim="createForm.P1080.src" auto-complete="off">
-                <template slot="prepend">https://video.calibur.tv/</template>
-              </el-input>
-            </el-col>
-            <el-col :span="4" :offset="1">
-              字幕：<el-switch v-model="createForm.P1080.useLyc"></el-switch>
-            </el-col>
-          </el-form-item>
-        </el-row>
-        <el-form-item label="海报" :label-width="'85px'">
-          <el-input v-model.trim="createForm.poster" auto-complete="off">
-            <template slot="prepend">https://image.calibur.tv/</template>
-          </el-input>
-        </el-form-item>
-        <el-form-item v-if="createForm.P720.useLyc || createForm.P1080.useLyc" label="字幕" :label-width="'85px'">
-          <el-input v-model.trim="createForm.lyric.zh" auto-complete="off">
-            <template slot="prepend">https://video.calibur.tv/</template>
-          </el-input>
-        </el-form-item>
-        <el-form-item label="名称" :label-width="'85px'">
-          <el-input v-model.trim="createForm.name" type="textarea" placeholder="一行一个" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item v-if="!createForm.P720.show && !createForm.P1080.show" label="外链资源" :label-width="'85px'">
-          <el-input v-model.trim="createForm.url" auto-complete="off"></el-input>
-        </el-form-item>
-      </el-form>
-    </v-modal>
     <footer>
       <el-pagination
         layout="total, sizes, prev, pager, next, jumper"
@@ -272,28 +157,6 @@
       "en": ""
     }
   };
-  const defaultCreateForm = {
-    P720: {
-      show: false,
-      useLyc: false,
-      src: 'bangumi/${name}/video/720/${n}.mp4'
-    },
-    P1080: {
-      show: false,
-      useLyc: false,
-      src: 'bangumi/${name}/video/1080/${n}.mp4'
-    },
-    lyric: {
-      zh: 'bangumi/${name}/lyric/zh/${n}.vtt',
-      en: 'bangumi/${name}/lyric/en/${n}.vtt'
-    },
-    bangumiEnglishName: '',
-    bname: '',
-    name: '',
-    part: '',
-    url: 'bangumi/${name}/video/${n}.mp4',
-    poster: 'bangumi/${name}/poster/${n}.jpg',
-  }
   export default {
     computed: {
       filter () {
@@ -325,7 +188,6 @@
           url: '',
           resource: defaultResource
         },
-        createForm: defaultCreateForm,
         CDNPrefix: 'https://image.calibur.tv/'
       }
     },
@@ -357,11 +219,6 @@
         this.editForm.resource = row.resource ? this.$deepAssign(defaultResource, row.resource) : defaultResource
 
         this.showEditorModal = true;
-      },
-      preview(url) {
-        if (url) {
-          window.open(`${this.CDNPrefix}${url}`)
-        }
       },
       computedBangumiId(bname) {
         for (const bangumi of this.bangumis) {
@@ -400,100 +257,6 @@
             console.log(err);
           });
         })
-      },
-      handleCreateCancel() {
-        this.createForm = defaultCreateForm
-        this.showCreateModal = false
-      },
-      handleCreateDone() {
-        const part = this.createForm.part.split('-');
-        if (!this.createForm.bname) {
-          this.$message.warning('先选择番剧');
-          return;
-        }
-        if (part.length !== 2) {
-          this.$message.warning('集数不符合规范');
-          return;
-        }
-        const [begin, end] = [part[0] - 0, part[1] - 0];
-        const length = end - begin + 1;
-        if (length <= 0 || begin <= 0) {
-          this.$message.warning('集数不符合规范');
-          return;
-        }
-        const bangumiEnglishName = this.createForm.bangumiEnglishName.toLowerCase();
-        if (bangumiEnglishName === '') {
-          this.$message.warning('未填写番剧英文名');
-          return;
-        }
-        const names = this.createForm.name.split('\n');
-        if (names.length !== length) {
-          this.$message.warning('名称个数不对');
-          return;
-        }
-        let arr = [], j =0;
-        const bangumi_id = this.computedBangumiId(this.createForm.bname);
-        const use720P = this.createForm.P720.show;
-        const use1080P = this.createForm.P1080.show;
-        const use720Lyc = this.createForm.P720.useLyc;
-        const use1080Lyc = this.createForm.P1080.useLyc;
-        const useOuterResource = !(use720P || use1080P);
-        const useLyric = use720Lyc || use1080Lyc;
-        for (let i = begin; i <= end; i++) {
-          const resource = useOuterResource ? '' : {
-            "video": {
-              "720": {
-                "useLyc": false,
-                "src": ""
-              },
-              "1080": {
-                "useLyc": false,
-                "src": ""
-              }
-            },
-            "lyric": {
-              "zh": "",
-              "en": ""
-            }
-          };
-          if ( ! useOuterResource) {
-            if (use720P) {
-              resource.video['720'] = {
-                src: this.createForm.P720.src.replace('${n}', i).replace('${name}', bangumiEnglishName),
-                useLyc: use720Lyc
-              };
-            }
-            if (use1080P) {
-              resource.video['1080'] = {
-                src: this.createForm.P1080.src.replace('${n}', i).replace('${name}', bangumiEnglishName),
-                useLyc: use1080Lyc
-              };
-            }
-          }
-          if (useLyric) {
-            // 这里默认只写入中文字体
-            resource.lyric = {
-              'zh': this.createForm.lyric.zh.replace('${n}', i).replace('${name}', bangumiEnglishName)
-            }
-          }
-          arr.push({
-            'resource': resource,
-            'bangumi_id': bangumi_id,
-            'part': i,
-            'name': names[j++],
-            'poster': this.createForm.poster.replace('${n}', i).replace('${name}', bangumiEnglishName),
-            'url': useOuterResource
-              ? this.createForm.url.replace('${n}', i).replace('${name}', bangumiEnglishName)
-              : ''
-          });
-        }
-        this.$http.post('/video/create', { arr }).then(() => {
-          this.$message.success('操作成功');
-          this.handleCreateCancel();
-        }, (err) => {
-          this.$message.error('操作失败');
-          console.log(err);
-        });
       }
     }
   }

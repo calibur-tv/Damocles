@@ -12,9 +12,7 @@ http.interceptors.request.use((config) => {
   return document.getElementById('__orz') ? config : null
 })
 
-http.interceptors.response.use((res) => {
-  return res && res.data
-}, (err) => {
+http.interceptors.response.use(res => res && res.data, err => {
   if (err.response && err.response.status === 401) {
     alert('登录超时，请重新登录')
     window.location = '/'

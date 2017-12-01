@@ -119,6 +119,6 @@ class BangumiController extends Controller
 
     public function list()
     {
-        return Bangumi::withTrashed()->select('id', 'name')->get();
+        return Bangumi::withTrashed()->select('id', 'name', 'deleted_at')->get();
     }
 }

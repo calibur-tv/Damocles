@@ -10,12 +10,12 @@
     <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="main-view">
       <el-form-item label="番剧名称" prop="name">
         <el-col :span="8">
-          <el-input v-model="form.name" placeholder="中文名"></el-input>
+          <el-input v-model.trim="form.name" placeholder="中文名"></el-input>
         </el-col>
       </el-form-item>
       <el-form-item label="番剧别名" prop="alias" required>
         <el-input type="textarea"
-                  v-model="form.alias"
+                  v-model.trim="form.alias"
                   placeholder="中文名、日文名、英文名... 名字之间以逗号分隔"
         ></el-input>
       </el-form-item>
@@ -82,9 +82,9 @@
             placement="left"
             width="200"
             trigger="hover">
-            <img :src="`${CDNPrefix}${form.avatar}`" alt="">
+            <img :src="`${$CDNPrefix}${form.avatar}`" alt="">
           </el-popover>
-          <a type="text" :href="`${CDNPrefix}${form.avatar}`" target="_blank" v-popover:popoverAvatar>
+          <a type="text" :href="`${$CDNPrefix}${form.avatar}`" target="_blank" v-popover:popoverAvatar>
             <i class="el-icon-view"></i>&nbsp;预览
           </a>
         </el-col>
@@ -116,9 +116,9 @@
             placement="left"
             width="200"
             trigger="hover">
-            <img :src="`${CDNPrefix}${form.banner}`" alt="">
+            <img :src="`${$CDNPrefix}${form.banner}`" alt="">
           </el-popover>
-          <a type="text" :href="`${CDNPrefix}${form.banner}`" target="_blank" v-popover:popoverBanner>
+          <a type="text" :href="`${$CDNPrefix}${form.banner}`" target="_blank" v-popover:popoverBanner>
             <i class="el-icon-view"></i>&nbsp;预览
           </a>
         </el-col>
@@ -326,8 +326,7 @@
         uploadHeaders: {
           token: '',
           key: ''
-        },
-        CDNPrefix: 'https://image.calibur.tv/'
+        }
       }
     },
     created () {
@@ -371,23 +370,29 @@
         if (!isLt2M) {
           this.$message.error('上传头像图片大小不能超过 1MB!');
         }
-        this.$message.info('上传中，请稍候...');
-        this.uploadHeaders.key = `bangumi/avatar/${new Date().getTime()}/${Math.random().toString(36).substring(3, 6)}`;
+        if (isFormat && isLt2M) {
+          this.$message.info('上传中，请稍候...');
+        }
+
+        this.uploadHeaders.key = `bangumi/avatar/${new Date().getTime()}/${file.name}`;
         return isFormat && isLt2M;
       },
       beforeBannerUpload(file) {
         const isFormat = file.type === 'image/jpeg' || file.type === 'image/png';
-        const isLt2M = file.size / 1024 / 1024 < 2;
+        const isLt1M = file.size / 1024 / 1024 < 2;
 
         if (!isFormat) {
           this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!');
         }
-        if (!isLt2M) {
+        if (!isLt1M) {
           this.$message.error('上传头像图片大小不能超过 2MB!');
         }
-        this.$message.info('上传中，请稍候...');
-        this.uploadHeaders.key = `bangumi/banner/${new Date().getTime()}/${Math.random().toString(36).substring(3, 6)}`;
-        return isFormat && isLt2M;
+        if (isFormat && isLt1M) {
+          this.$message.info('上传中，请稍候...');
+        }
+
+        this.uploadHeaders.key = `bangumi/banner/${new Date().getTime()}/${file.name}`;
+        return isFormat && isLt1M;
       },
       handleAvatarSuccess(res, file) {
         this.$message.success('上传成功');
