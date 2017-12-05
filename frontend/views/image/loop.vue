@@ -35,6 +35,10 @@
       padding: 10px;
     }
   }
+
+  #another {
+    display: none;
+  }
 </style>
 
 <template>
@@ -43,7 +47,14 @@
       <el-button type="primary" icon="plus" size="large" @click="showCreateModal = true">添加图片</el-button>
     </header>
     <div class="main-view">
-      <div class="loop" v-for="(item, index) in filter">
+      <img alt="another"
+           v-if="createForm.url"
+           :src="`${$CDNPrefix}${createForm.url}?imageMogr2/auto-orient/strip/gravity/Center/crop/435x300`"
+           @load="getImageGrayLevel"
+           ref="another"
+           crossOrigin="anonymous"
+           id="another"/>
+      <div class="loop" v-for="(item, index) in filter" :key="item.id">
         <img :src="$resize(item.url, { width: 280, height: 173 })" alt="loop">
         <div class="control">
           <el-switch v-model="item.use" @change="handleSwitch(item, index)"></el-switch>
@@ -51,50 +62,68 @@
       </div>
     </div>
     <v-modal v-model="showCreateModal"
-             :header-text="'首页轮播图上传'"
+             header-text="首页轮播图上传"
              @submit="saveLoop">
-      <el-form :model="createForm">
-        <el-col :span="11">
-          <el-form-item label="番剧id" :label-width="'60px'">
-            <el-input name="bangumi_id"
-                      v-model.trim="createForm.bangumiId"
-                      auto-complete="off"
-            ></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="11" :offset="1">
-          <el-form-item label="用户id" :label-width="'60px'">
-            <el-input name="user_id"
-                      v-model.trim="createForm.userId"
-                      auto-complete="off"
-            ></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="21">
-          <el-form-item label="资源" :label-width="'60px'">
-            <el-input name="url"
-                      v-model.trim="createForm.url"
-                      v-validate="{
-                        rules: 'required',
-                        scope: 'create-loop'
-                      }"
-                      auto-complete="off"
-            ><template slot="prepend">https://image.calibur.tv/</template>
+      <el-form :model="createForm" label-width="100px" ref="form">
+        <el-form-item label="资源"
+                      prop="url"
+                      :rules="[
+            { required: true, message: '资源链接不能为空', trigger: 'change' }
+          ]">
+          <el-col :span="19">
+            <el-input name="url" v-model.trim="createForm.url" :disabled="true">
+              <template slot="prepend">https://image.calibur.tv/</template>
             </el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="2" :offset="1">
-          <el-form-item>
-            <el-upload
-              action="http://up.qiniu.com"
-              :data="uploadHeaders"
-              :show-file-list="false"
-              :on-success="handleCreateLoopSuccess"
-              :before-upload="beforeUpload">
-              <i class="el-icon-plus"></i>
-            </el-upload>
-          </el-form-item>
-        </el-col>
+          </el-col>
+          <el-col :span="2" :offset="1">
+            <el-form-item>
+              <el-upload
+                action="http://up.qiniu.com"
+                :data="uploadHeaders"
+                :show-file-list="false"
+                :on-success="handleCreateLoopSuccess"
+                :before-upload="beforeUpload">
+                <el-button type="text">
+                  <i class="el-icon-plus"></i>
+                  上传
+                </el-button>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="2" v-if="createForm.url">
+            <el-popover
+              ref="popoverImage"
+              placement="left"
+              width="200"
+              trigger="hover">
+              <img :src="`${$CDNPrefix}${createForm.url}`" alt="">
+            </el-popover>
+            <a type="text" :href="`${$CDNPrefix}${createForm.url}`" target="_blank" v-popover:popoverImage>
+              <i class="el-icon-view"></i>&nbsp;预览
+            </a>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="番剧"
+                      prop="bangumi_id"
+                      :rules="[
+            { type: 'number', required: true, message: '番剧不能为空', trigger: 'change' }
+          ]">
+          <el-select v-model="createForm.bangumi_id" placeholder="请选择">
+            <el-option
+              v-for="item in bangumis"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="用户id"
+                      prop="user_id"
+                      :rules="[
+            { required: true, message: '用户id不能为空', trigger: 'blur' }
+          ]">
+          <el-input v-model.trim="createForm.user_id"></el-input>
+        </el-form-item>
       </el-form>
     </v-modal>
     <footer>
@@ -115,8 +144,9 @@
 <script>
   const defaultCreateForm = {
     url: '',
-    userId: '',
-    bangumiId: ''
+    user_id: '',
+    bangumi_id: '',
+    gray: 0
   }
   export default {
     computed: {
@@ -128,13 +158,14 @@
     data () {
       return {
         list: [],
+        bangumis: [],
         pagination: {
           totalPage: 0,
           pageSize: 12,
           curPage: 1
         },
         showCreateModal: false,
-        createForm: defaultCreateForm,
+        createForm: Object.assign({}, defaultCreateForm),
         uploadHeaders: {
           token: '',
           key: ''
@@ -148,8 +179,9 @@
     methods: {
       getLoops() {
         this.$http.get('/image/loop/list').then((data) => {
-          this.pagination.totalPage = data.length
-          this.list = data.map(item => {
+          this.pagination.totalPage = data.loop.length
+          this.bangumis = data.bangumi
+          this.list = data.loop.map(item => {
             item.use = !item.deleted_at
             return item
           })
@@ -191,36 +223,39 @@
         if (!isLt2M) {
           this.$message.error('上传头像图片大小不能超过 2MB!');
         }
-        this.uploadHeaders.key = `loop/${new Date().getTime()}/${Math.random().toString(36).substring(3, 6)}`;
+        this.uploadHeaders.key = `loop/${new Date().getTime()}-${Math.random().toString(36).substring(3, 6)}-${file.name}`;
         return isFormat && isLt2M;
       },
       handleCreateLoopSuccess(res, file) {
         this.createForm.url = res.key
       },
       saveLoop() {
-        this.$validator.validateAll('create-loop').then((result) => {
-          if (result) {
-            this.$http.post('/image/loop/create', {
-              url: this.createForm.url,
-              bangumi_id: this.createForm.bangumi_id,
-              user_id: this.createForm.user_id
-            }).then((id) => {
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            this.$http.post('/image/loop/create', this.createForm).then((id) => {
               this.list.unshift({
                 id: id,
-                url: this.createForm.url,
+                use: true,
                 bangumi_id: this.createForm.bangumi_id,
                 user_id: this.createForm.user_id,
-                use: true
+                url: `${this.$CDNPrefix}${this.createForm.url}`,
+                gray: this.createForm.gray
               });
-              this.createForm = defaultCreateForm;
+              this.showCreateModal = false;
               this.$message.success('操作成功');
+              this.$nextTick(() => {
+                this.createForm = Object.assign({}, defaultCreateForm);
+              });
             }).catch(() => {
               this.$message.error('操作失败');
             });
           } else {
-            this.$message.warning('请先上传图片');
+            return false;
           }
-        })
+        });
+      },
+      getImageGrayLevel() {
+        this.createForm.gray = this.$imageGrayLevel(this.$refs.another, 100)
       }
     }
   }

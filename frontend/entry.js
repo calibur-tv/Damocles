@@ -5,7 +5,6 @@ import store from './store'
 import Helpers from './utils/helpers'
 import Element from 'element-ui'
 import Modal from 'component/modal'
-import './utils/validate'
 import 'lodash'
 
 Vue.use(Element)

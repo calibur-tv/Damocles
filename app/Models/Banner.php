@@ -9,7 +9,7 @@ class Banner extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['url', 'user_id', 'bangumi_id'];
+    protected $fillable = ['url', 'user_id', 'bangumi_id', 'gray'];
 
     public function user()
     {
