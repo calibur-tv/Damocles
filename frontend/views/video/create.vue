@@ -141,11 +141,9 @@
                       required>
           <el-input v-model.trim="modal.form.name"></el-input>
         </el-form-item>
-        <el-form-item label="视频封面"
-                      prop="poster"
-                      required>
+        <el-form-item label="视频封面" prop="poster" required>
           <el-col :span="19">
-            <el-input v-model.trim="modal.form.poster" placeholder="点击右侧按钮上传封面">
+            <el-input v-model.trim="modal.form.poster" :disabled="true" placeholder="点击右侧按钮上传封面">
               <template slot="prepend">Https://image.calibur.tv/</template>
             </el-input>
           </el-col>

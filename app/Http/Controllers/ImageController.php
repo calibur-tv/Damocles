@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bangumi;
 use App\Models\Banner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,15 +19,18 @@ class ImageController extends Controller
     
     public function loopShow()
     {
-        return Banner::withTrashed()->get();
+        return [
+            'loop' => Banner::withTrashed()->get(),
+            'bangumi' => Bangumi::select('id', 'name')->get()
+        ];
     }
 
     public function loopToggle(Request $request)
     {
         $request->get('isDelete')
             ? DB::table('banners')
-            ->where('id', $request->get('id'))
-            ->update(['deleted_at' => Carbon::now()])
+                ->where('id', $request->get('id'))
+                ->update(['deleted_at' => Carbon::now()])
             : Banner::withTrashed()->find($request->get('id'))->restore();
     }
 
@@ -35,7 +39,8 @@ class ImageController extends Controller
         return Banner::insertGetId([
             'url' => $request->get('url'),
             'bangumi_id' => $request->get('bangumi_id') ?: 0,
-            'user_id' => $request->get('user_id') ?: 0
+            'user_id' => $request->get('user_id') ?: 0,
+            'gray' => $request->get('gray') ?: 0
         ]);
     }
 }

@@ -57,7 +57,7 @@
       </el-form-item>
       <el-form-item label="番剧头像" required>
         <el-col :span="16">
-          <el-input v-model.trim="form.avatar" auto-complete="off">
+          <el-input v-model.trim="form.avatar" :disabled="true" auto-complete="off">
             <template slot="prepend">https://image.calibur.tv/</template>
           </el-input>
         </el-col>
@@ -91,7 +91,7 @@
       </el-form-item>
       <el-form-item label="番剧背景" required>
         <el-col :span="16">
-          <el-input v-model.trim="form.banner" auto-complete="off">
+          <el-input v-model.trim="form.banner" :disabled="true" auto-complete="off">
             <template slot="prepend">https://image.calibur.tv/</template>
           </el-input>
         </el-col>
