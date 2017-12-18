@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Bangumi;
 use App\Models\BangumiCollection;
 use App\Models\Tag;
+use App\Models\Video;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +40,24 @@ class BangumiController extends Controller
             ]);
         }
         DB::table('bangumi_tag')->insert($tags);
+    }
+
+    public function release(Request $request)
+    {
+        $bangumi_id = $request->get('bangumi_id');
+        $video_id = $request->get('video_id');
+
+        $video = Video::find($video_id);
+        if (is_null($video)) {
+            return response()->json(['data' => ''], 403);
+        }
+
+        Bangumi::where('id', $bangumi_id)->update([
+            'released_time' => time(),
+            'released_video_id' => $video_id
+        ]);
+
+        return response('success');
     }
 
     public function item(Request $request)

@@ -29,6 +29,8 @@ Route::group(['middleware' => ['auth']], function ()
 
         Route::post('/create', 'BangumiController@create');
 
+        Route::post('/release', 'BangumiController@release');
+
         Route::post('/edit', 'BangumiController@edit');
 
         Route::post('/delete', 'BangumiController@delete');
@@ -46,8 +48,6 @@ Route::group(['middleware' => ['auth']], function ()
     Route::group(['prefix' => 'video'], function ()
     {
         Route::get('/', 'PageController@video')->name('video');
-
-        Route::post('/create', 'VideoController@create');
 
         Route::post('/edit', 'VideoController@edit');
 
