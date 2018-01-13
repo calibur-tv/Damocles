@@ -9,7 +9,6 @@
     position: relative;
 
     .view {
-      margin-top: -$header-height;
       padding-right: $main-view-padding;
       padding-bottom: $main-view-padding;
       padding-top: $main-view-padding;

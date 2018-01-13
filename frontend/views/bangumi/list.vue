@@ -24,6 +24,7 @@
                      icon="upload2"
                      type="primary"
                      @click="handleUpdate(scope.row.id)"
+                     v-if="scope.row.id !== scope.row.collection_id"
           >更新</el-button>
           <el-button size="small"
                      icon="delete"
@@ -106,6 +107,20 @@
           })
         }).catch(() => {
         });
+      },
+      handleDelete(index, bangumi) {
+        this.$confirm('确认要执行该操作吗?', '提示').then(() => {
+          this.$http.post('/bangumi/delete', {
+            id: bangumi.id,
+            isDeleted: !!bangumi.deleted_at
+          }).then(() => {
+            this.$message.success('操作成功');
+            this.list[index + (this.pagination.curPage - 1) * this.pagination.pageSize].deleted_at = !bangumi.deleted_at
+          }).catch(() => {
+            this.$message.error('操作失败');
+          })
+        }).catch(() => {
+        })
       }
     }
   }
