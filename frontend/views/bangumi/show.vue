@@ -8,6 +8,9 @@
       </el-breadcrumb>
     </header>
     <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="main-view">
+      <el-form-item label="创建合集" v-if="!id">
+        <el-switch v-model="form.isCollection"></el-switch>
+      </el-form-item>
       <el-form-item label="番剧名称" prop="name">
         <el-col :span="8">
           <el-input v-model.trim="form.name" placeholder="中文名"></el-input>
@@ -19,7 +22,7 @@
                   placeholder="中文名、日文名、英文名... 名字之间以逗号分隔"
         ></el-input>
       </el-form-item>
-      <el-form-item label="连载周期">
+      <el-form-item label="连载周期" v-if="!form.isCollection">
         <el-select v-model="form.released_at" placeholder="请选择">
           <el-option
             v-for="item in releaseWeekly"
@@ -32,7 +35,7 @@
       <el-form-item label="外站视频">
         <el-switch v-model="form.others_site_video"></el-switch>
       </el-form-item>
-      <el-form-item label="上映日期" prop="published_at" required>
+      <el-form-item label="上映日期" prop="published_at" v-if="!form.isCollection" required>
         <el-date-picker v-model="form.published_at" type="date" placeholder="选择日期"></el-date-picker>
       </el-form-item>
       <el-form-item label="番剧标签" prop="tags" required>
@@ -45,7 +48,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="所属专题">
+      <el-form-item label="所属专题" v-if="!form.isCollection">
         <el-select v-model="form.collection_id" placeholder="请选择">
           <el-option
             v-for="item in collections"
@@ -55,7 +58,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="番剧头像" required>
+      <el-form-item label="番剧头像" prop="avatar" required>
         <el-col :span="16">
           <el-input v-model.trim="form.avatar" :disabled="true" auto-complete="off">
             <template slot="prepend">https://image.calibur.tv/</template>
@@ -89,7 +92,7 @@
           </a>
         </el-col>
       </el-form-item>
-      <el-form-item label="番剧背景" required>
+      <el-form-item label="番剧背景" prop="banner" required>
         <el-col :span="16">
           <el-input v-model.trim="form.banner" :disabled="true" auto-complete="off">
             <template slot="prepend">https://image.calibur.tv/</template>
@@ -123,7 +126,7 @@
           </a>
         </el-col>
       </el-form-item>
-      <el-form-item label="季度信息" prop="season">
+      <el-form-item label="季度信息" prop="season" v-if="!form.isCollection">
         <el-input
           type="textarea"
           :rows="2"
@@ -131,7 +134,7 @@
           v-model.trim="form.season">
         </el-input>
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-if="!form.isCollection">
         <el-collapse>
           <el-collapse-item title="季度信息介绍：">
             <div>1. 这个字段可为空</div>
@@ -300,7 +303,8 @@
           banner: '',
           season: '',
           summary: '',
-          others_site_video: false
+          others_site_video: false,
+          isCollection: false
         },
         rules: {
           name: [
@@ -332,6 +336,8 @@
     created () {
       this.getBangumiById()
       this.getUptoken()
+      this.getCollections()
+      this.getTags()
     },
     methods: {
       getBangumiById () {
@@ -344,15 +350,23 @@
             id: this.id
           }
         }).then(data => {
-          this.bangumi = data.bangumi
-          this.tags = data.tags
-          this.collections = data.collections.concat({
+          this.bangumi = data
+          this.form = data
+          this.loading = false
+        })
+      },
+      getCollections() {
+        this.$http.get('/bangumi/collections').then((data) => {
+          this.collections = data.concat({
             id: 0,
             name: '无',
             title: '无'
           })
-          this.form = data.bangumi
-          this.loading = false
+        })
+      },
+      getTags() {
+        this.$http.get('/bangumi/tags').then((data) => {
+          this.tags = data
         })
       },
       getUptoken() {

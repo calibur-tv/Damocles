@@ -6,16 +6,17 @@
     width: 100%;
     overflow-x: hidden;
     overflow-y: auto;
+    position: relative;
 
     .view {
-      margin-top: -$header-height;
-      padding: $main-view-padding;
-      padding-top: $main-view-padding + $header-height;
+      padding-right: $main-view-padding;
+      padding-bottom: $main-view-padding;
+      padding-top: $main-view-padding;
       padding-left: $sidebar-width + $main-view-padding;
       transition: $sidebar-transition;
       display: flex;
       flex-direction: column;
-      min-height: 100%;
+      width: 100%;
 
       &.view-collapse {
         padding-left: $sidebar-collapse + 20;
