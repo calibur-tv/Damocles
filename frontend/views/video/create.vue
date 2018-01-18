@@ -1,3 +1,16 @@
+<style lang="scss" scoped>
+  .video-preview {
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+
+    .image {
+      width: 300px;
+      height: 225px;
+    }
+  }
+</style>
+
 <template>
   <section v-loading="loading">
     <header>
@@ -13,7 +26,7 @@
                     :rules="[{ type: 'number', required: true, message: '请选择视频所属番剧', trigger: 'change' }]">
         <el-col :span="20">
           <el-select v-model="form.bangumiId"
-                     :disabled="form.saveBangumiId"
+                     :disabled="saver.bangumi"
                      placeholder="请选择">
             <el-option
               v-for="item in bangumis"
@@ -28,25 +41,25 @@
           <el-tooltip effect="dark" content="确认后不可修改" placement="top">
             <el-button type="primary"
                        @click="validateAndSaveBangumiId"
-                       :disabled="form.saveBangumiId"
+                       :disabled="saver.bangumi"
             >确认</el-button>
           </el-tooltip>
         </el-col>
       </el-form-item>
-      <el-form-item label="资源前缀"
+      <el-form-item label="番剧别名"
                     prop="prefix"
                     :rules="[{ required: true, message: '番剧英文名不能为空', trigger: 'blur' }]">
-      <el-col :span="20">
+        <el-col :span="20">
           <el-input v-model.trim="form.prefix"
                     placeholder="番剧的英文名"
-                    :disabled="form.savePrefix"
+                    :disabled="saver.prefix"
           ></el-input>
         </el-col>
         <el-col :span="3" :offset="1">
           <el-tooltip effect="dark" content="确认后不可修改" placement="top">
             <el-button @click="validateAndSavePrefix"
                        type="primary"
-                       :disabled="form.savePrefix"
+                       :disabled="saver.prefix"
             >确认</el-button>
           </el-tooltip>
         </el-col>
@@ -62,53 +75,109 @@
           <el-input-number v-model="form.parts[0]"
                            :min="1"
                            label="描述文字"
-                           :disabled="form.saveParts"
+                           :disabled="saver.parts"
           ></el-input-number>
           &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;
           <el-input-number v-model="form.parts[1]"
                            :min="form.parts[0]"
                            label="描述文字"
-                           :disabled="form.saveParts"
+                           :disabled="saver.parts"
           ></el-input-number>
         </el-col>
         <el-col :span="3" :offset="1">
           <el-tooltip effect="dark" content="确认后不可修改" placement="top">
             <el-button @click="validateAndSaveParts"
                        type="primary"
-                       :disabled="form.saveParts"
+                       :disabled="saver.parts"
             >确认</el-button>
           </el-tooltip>
         </el-col>
       </el-form-item>
-      <template v-if="form.saveParts && form.saveBangumiId && form.savePrefix">
-        <el-form-item label="视频">
-          <el-upload action="http://up.qiniu.com"
-                     multiple
-                     ref="uploader"
-                     :data="uploadHeaders"
-                     :on-preview="handlePreview"
-                     :on-error="handleError"
-                     :on-remove="handleRemove"
-                     :on-success="handleSuccess"
-                     :on-exceed="handleExceed"
-                     :limit="form.parts[1] - form.parts[0] + 1"
-                     :auto-upload="false"
-                     :before-upload="beforeVideoUpload"
-                     :file-list="form.videos">
-            <el-button slot="trigger" size="small" type="primary">点击添加视频</el-button>
-          </el-upload>
+      <el-form-item label="封面后缀">
+        <el-col :span="20">
+          <el-select v-model="form.suffix" :disabled="saver.suffix" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item"
+              :label="item"
+              :value="item">
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="3" :offset="1">
+          <el-tooltip effect="dark" content="确认后不可修改" placement="top">
+            <el-button @click="handleSaverSuffix"
+                       type="primary"
+                       :disabled="saver.suffix"
+            >确认</el-button>
+          </el-tooltip>
+        </el-col>
+      </el-form-item>
+      <el-form-item>
+        <el-alert title="大部分视频封面图的格式是相同的，部分不相同的格式可以在之后重置" type="info"></el-alert>
+      </el-form-item>
+      <el-form-item label="每集名称"
+                    prop="names"
+                    :rules="[{ required: true, message: '内容不能为空', trigger: 'blur' }]">
+        <el-col :span="20">
+          <el-input v-model.trim="form.names"
+                    :disabled="saver.names"
+                    type="textarea"
+                    :rows="10"
+                    placeholder="每集番剧的名称，每行一个，不要有空行"
+          ></el-input>
+        </el-col>
+        <el-col :span="3" :offset="1">
+          <el-tooltip effect="dark" content="确认后不可修改" placement="top">
+            <el-button @click="validateAndSaveNames"
+                       type="primary"
+                       :disabled="saver.names"
+            >确认</el-button>
+          </el-tooltip>
+        </el-col>
+      </el-form-item>
+      <el-form-item label="自建资源">
+        <el-switch v-model="form.haveSelfResource"></el-switch>
+      </el-form-item>
+      <el-form-item label="外链资源" prop="videos">
+        <el-col :span="20">
+          <el-input v-model.trim="form.videos"
+                    type="textarea"
+                    :disabled="saver.videos"
+                    :rows="10"
+                    placeholder="如果有自建资源，则外链资源可为空，如果某一集没有外链资源，则那一行可为空，如果不为空，则必须为合法链接，如果没有自建资源，要求就和标题一样"
+          ></el-input>
+        </el-col>
+        <el-col :span="3" :offset="1">
+          <el-tooltip effect="dark" content="确认后不可修改" placement="top">
+            <el-button @click="validateAndSaveUrls"
+                       type="primary"
+                       :disabled="saver.videos"
+            >确认</el-button>
+          </el-tooltip>
+        </el-col>
+      </el-form-item>
+      <template v-if="saver.bangumi &&
+                      saver.prefix &&
+                      saver.names &&
+                      saver.suffix &&
+                      saver.parts &&
+                      saver.videos">
+        <el-form-item label="视频预览">
+          <el-card class="video-preview" v-for="(part, index) in (form.parts[1] - form.parts[0] + 1)" :key="part">
+            <img :src="`https://image.calibur.tv/${form.posters[index]}?imageMogr2/auto-orient/strip|imageView2/1/w/600/h/450/format/webp`" class="image">
+            <div style="padding: 14px;">
+              <span>【第 {{ index + form.parts[0] }} 集】{{ form.titles[index] }}</span>
+              <div class="bottom clearfix">
+                <a :href="`https://video.calibur.tv/bangumi/${form.prefix}/video/720/${index + form.parts[0]}.mp4`" target="_blank">查看视频资源</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a v-if="form.urls[index]" :href="form.urls[index]" target="_blank">查看外链资源</a>
+              </div>
+            </div>
+          </el-card>
         </el-form-item>
         <el-form-item>
-          <el-alert title="提交之前要点击每个视频为其添加信息" type="info"></el-alert>
-        </el-form-item>
-        <el-form-item label="是否转码">
-          <el-switch v-model="needTranslate"></el-switch>
-        </el-form-item>
-        <el-form-item>
-          <el-alert title="视频播放只支持 mp4 格式，如果上传的视频不是 mp4 格式的，请勾选转码，并联系管理员" type="info"></el-alert>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm">上传并提交</el-button>
+          <el-button type="primary" @click="submitForm">确认并上传</el-button>
         </el-form-item>
       </template>
       <template v-else>
@@ -120,80 +189,10 @@
         </el-form-item>
       </template>
     </el-form>
-    <v-modal v-model="modal.show"
-             @submit="saveVideoInfo"
-             :header-text="`为视频《${modal.file.name}》补充必要信息`">
-      <el-form :model="modal.form"
-               ref="videoForm"
-               label-width="100px">
-        <el-form-item label="集数">
-          <el-select v-model="modal.form.part" placeholder="请选择">
-            <el-option
-              v-for="part in modal.optionParts"
-              :key="part"
-              :label="part"
-              :value="part">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="视频名称"
-                      prop="name"
-                      required>
-          <el-input v-model.trim="modal.form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="视频封面" prop="poster" required>
-          <el-col :span="19">
-            <el-input v-model.trim="modal.form.poster" :disabled="true" placeholder="点击右侧按钮上传封面">
-              <template slot="prepend">Https://image.calibur.tv/</template>
-            </el-input>
-          </el-col>
-          <el-col :span="2" :offset="1">
-            <el-form-item>
-              <el-upload
-                action="http://up.qiniu.com"
-                :data="uploadHeaders"
-                :show-file-list="false"
-                :on-success="handlePosterSuccess"
-                :before-upload="beforePosterUpload">
-                <el-button type="text">
-                  <i class="el-icon-plus"></i>
-                  上传
-                </el-button>
-              </el-upload>
-            </el-form-item>
-          </el-col>
-          <el-col :span="2" v-if="modal.form.poster">
-            <el-popover
-              ref="popoverPoster"
-              placement="left"
-              width="200"
-              trigger="hover">
-              <img :src="`${$CDNPrefix}${modal.form.poster}`" alt="">
-            </el-popover>
-            <a type="text" :href="`${$CDNPrefix}${modal.form.poster}`" target="_blank" v-popover:popoverPoster>
-              <i class="el-icon-view"></i>&nbsp;预览
-            </a>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="外站资源"
-                      :rules="[{ validator: validateLink, trigger: 'change' }]"
-                      prop="url">
-          <el-input v-model.trim="modal.form.url" placeholder="其它网站该视频的资源地址，可选"></el-input>
-        </el-form-item>
-      </el-form>
-    </v-modal>
   </section>
 </template>
 
 <script>
-  const emptyModalForm = {
-    part: undefined,
-    poster: '',
-    name: '',
-    url: '',
-    resource: ''
-  }
-
   export default {
     data () {
       return {
@@ -210,214 +209,198 @@
             callback()
           }
         },
-        validateLink: (rule, value, callback) => {
-          if (typeof value !== 'string') {
-            callback(new Error('连接必须是字符串'))
-          }
-          if (value === '' || value.startsWith('http')) {
-            callback()
-          } else {
-            callback(new Error('连接不正确'))
-          }
-        },
+        options: ['jpg', 'jpeg', 'png'],
         form: {
           bangumiId: '',
           parts: [1, 1],
           prefix: '',
-          saveBangumiId: false,
-          savePrefix: false,
-          saveParts: false,
-          videos: [],
-          uploaded: false
+          suffix: 'jpg',
+          names: '',
+          videos: '',
+          uploaded: false,
+          titles: [],
+          urls: [],
+          posters: [],
+          haveSelfResource: true
         },
-        uploadHeaders: {
-          token: ''
+        saver: {
+          bangumi: false,
+          prefix: false,
+          suffix: false,
+          videos: false,
+          parts: false,
+          names: false
         },
-        modal: {
-          show: false,
-          file: {},
-          form: Object.assign({}, emptyModalForm),
-          optionParts: [],
-          selectedParts: []
-        },
-        list: {},
-        needTranslate: false
-      }
-    },
-    watch: {
-      'form.parts' (val) {
-        this.computeOptionParts(val)
+        list: {}
       }
     },
     created () {
       this.getBangumis()
-      this.getUptoken()
     },
     methods: {
-      computeOptionParts (val) {
-        const begin = val[0]
-        const end = val[1]
-        const arr = []
-        for (let i = begin; i <= end; i++) {
-          arr.push(i)
-        }
-        this.modal.optionParts = arr.filter(item => this.modal.selectedParts.indexOf(item) === -1)
-      },
       getBangumis () {
         this.$http.get('/bangumi/list').then((data) => {
           this.bangumis = data
           this.loading = false
         })
       },
-      getUptoken() {
-        this.$http.get('/image/uptoken').then((token) => {
-          this.uploadHeaders.token = token
-        })
-      },
       validateAndSaveBangumiId () {
         this.$refs.form.validateField('bangumiId', (error) => {
           if (!error) {
-            this.form.saveBangumiId = true
+            this.saver.bangumi = true
           }
         })
       },
       validateAndSavePrefix () {
         this.$refs.form.validateField('prefix', (error) => {
           if (!error) {
-            this.form.savePrefix = true
+            this.saver.prefix = true
           }
         })
       },
       validateAndSaveParts () {
         this.$refs.form.validateField('parts', (error) => {
           if (!error) {
-            this.form.saveParts = true
+            this.saver.parts = true
           }
         })
       },
-      beforeVideoUpload (file) {
-        if (file.type.match('video') === null) {
-          this.$notify.error({
-            title: '提示',
-            message: `视频《${file.name}》的格式不正确`,
-            duration: 0
-          })
-          return false
+      handleSaverSuffix () {
+        const arr = [];
+        const parts = this.form.parts;
+        const suffix = this.form.suffix;
+        for (let i= parts[0]; i <= parts[1]; i++) {
+          arr.push(`bangumi/${this.form.prefix}/poster/${i}.${suffix}`)
         }
-        this.uploadHeaders.key = `bangumi/${this.form.prefix}/video/${new Date().getTime()}${file.name}`;
-        return true
+        this.form.posters = arr;
+        this.saver.suffix = true;
       },
-      handleSuccess (res, file) {
-        const video = this.list[file.uid]
-        Object.assign(video, {
-          id: file.uid,
-          resource: {
-            "video": {
-              "720": {
-                "useLyc": false,
-                "src": res.key
-              },
-              "1080": {
-                "useLyc": false,
-                "src": ""
-              }
-            },
-            "lyric": {
-              "zh": "",
-              "en": ""
-            }
-          },
-          deleted_at: this.needTranslate ? moment().format('YYYY-MM-DD H:m:s') : null
-        })
-        this.list[file.uid] = Object.assign({}, video)
-        this.$message.success(`视频《${video.name}》已上传成功，正在保存`)
-        this.saveVideoToServer(video)
-      },
-      handlePreview (file) {
-        if (this.list[file.uid]) {
-          this.modal.form = Object.assign({}, this.list[file.uid])
-        } else {
-          this.modal.form = Object.assign({}, emptyModalForm)
+      validateAndSaveNames () {
+        const names = this.form.names;
+        if (!names) {
+          this.$message.error('标题不能为空');
+          return;
         }
-        this.modal.file = file
-        this.computeOptionParts(this.form.parts)
-        this.modal.show = true
-      },
-      handleError (err, file) {
-
-      },
-      handleRemove (file) {
-        const cache = this.list[file.uid]
-        if (cache) {
-          this.modal.optionParts.push(cache.part)
-          delete this.list[file.uid]
+        const parts = this.form.parts;
+        const length = parts[1] - parts[0] + 1;
+        const titles = names.split('\n')
+        const result = [];
+        if (titles.length !== length) {
+          this.$message.error('标题个数不对');
+          return;
         }
-      },
-      handleExceed () {
-        this.$message.error(`最多可上传 ${this.form.parts[1] - this.form.parts[0] + 1} 集视频`);
-      },
-      beforePosterUpload(file) {
-        const isFormat = file.type === 'image/jpeg' || file.type === 'image/png';
-        const isLt1M = file.size / 1024 / 1024 < 1;
-
-        if (!isFormat) {
-          this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!');
+        let goOut = false;
+        titles.forEach(title => {
+          if (!title || title.length > 20) {
+            goOut = true;
+          }
+          result.push(title.trim())
+        });
+        if (goOut) {
+          this.$message.error('每一个标题都不能为空，且不能超过20字');
+          return;
         }
-        if (!isLt1M) {
-          this.$message.error('上传头像图片大小不能超过 1MB!');
-        }
-        if (isFormat && isLt1M) {
-          this.$message.info('上传中，请稍候...');
-        }
-
-        this.uploadHeaders.key = `bangumi/${this.form.prefix}/poster/${new Date().getTime()}${file.name}`;
-        return isFormat && isLt1M;
+        this.form.titles = result
+        this.saver.names = true;
       },
-      handlePosterSuccess(res, file) {
-        this.$message.success('上传成功');
-        this.modal.form.poster = res.key
-      },
-      saveVideoInfo () {
-        this.$refs.videoForm.validate(valid => {
-          if (valid) {
-            this.list[this.modal.file.uid] = Object.assign({
-              bangumiId: this.form.bangumiId,
-              success: false
-            }, this.modal.form)
-            this.modal.selectedParts.push(this.modal.form.part)
-            this.$message.success('保存成功');
-            this.modal.show = false
+      validateAndSaveUrls () {
+        const videos = this.form.videos;
+        if (!videos) {
+          if (this.form.haveSelfResource) {
+            this.saver.videos = true
           } else {
-            return false
+            this.$message.error('资源链接不能为空');
           }
+          return
+        }
+        const parts = this.form.parts;
+        const length = parts[1] - parts[0] + 1;
+        const arr = videos.split('\n')
+        if (this.form.haveSelfResource) {
+          if (arr.length > length) {
+            this.$message.error('外链视频的个数大于视频的总数');
+            return;
+          }
+        } else {
+          if (arr.length !== length) {
+            this.$message.error('资源个数');
+            return;
+          }
+        }
+        let goOut = false;
+        const result = [];
+        arr.forEach(video => {
+          if (video && !(video.startsWith('http://') || video.startsWith('https://'))) {
+            goOut = true;
+          }
+          result.push(video.trim());
         })
-      },
-      saveVideoToServer (video) {
-        this.$http.post('/video/upload', video).then(() => {
-          this.$notify.success({
-            title: '提示',
-            message: `视频《${video.name}》保存成功！`,
-            duration: 0
-          })
-          this.list[video.id].success = true
-        }).catch(err => {
-          this.$notify.error({
-            title: '提示',
-            message: `视频《${video.name}》保存失败，请联系管理员`,
-            duration: 0
-          })
-          console.log(err)
-        })
+        if (goOut) {
+          this.$message.error('存在不合法的链接');
+          return;
+        }
+        this.form.urls = result;
+        this.saver.videos = true;
       },
       resetForm() {
-        Object.assign(this.form, {
-          saveBangumiId: false,
-          savePrefix: false,
-          saveParts: false
-        })
-        this.$refs.form.resetFields();
+        this.saver = {
+          bangumi: false,
+          prefix: false,
+          suffix: false,
+          parts: false,
+          names: false,
+          video: false
+        }
+      },
+      changePosterSuffix(index) {
+        this.$prompt('输入图片后缀', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(({ value }) => {
+          if (this.options.indexOf(value) === -1) {
+            this.$message.error('非法的图片后缀名');
+            return;
+          }
+          this.form.posters[index] = `${this.form.posters[index].split('.').shift()}.${value}`;
+        }).catch(() => {});
       },
       submitForm() {
+        const arr = [];
+        const begin = this.form.parts[0];
+        for (let i = begin; i <= this.form.parts[1]; i++) {
+          const idx = [i - begin];
+          arr.push({
+            bangumiId: this.form.bangumiId,
+            part: i,
+            name: this.form.titles[idx],
+            url: this.form.urls[idx] || '',
+            poster: this.form.posters[idx],
+            resource: this.form.haveSelfResource ? {
+              "video": {
+                "720": {
+                  "useLyc": false,
+                  "src": `bangumi/${this.form.prefix}/video/720/${i}.mp4`
+                },
+                "1080": {
+                  "useLyc": false,
+                  "src": ""
+                }
+              },
+              "lyric": {
+                "zh": "",
+                "en": ""
+              }
+            } : null
+          })
+        }
+        this.$http.post('video/save', arr).then(() => {
+          this.$message.success('操作成功');
+          this.$refs.form.resetFields();
+          this.resetForm();
+        }).catch((err) => {
+          console.log(err);
+          this.$message.error('保存失败，请联系管理员');
+        });
         this.$refs.form.validate((valid) => {
           if (valid) {
             let validate = true

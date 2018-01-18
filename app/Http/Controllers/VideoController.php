@@ -71,4 +71,31 @@ class VideoController extends Controller
             ]);
         }
     }
+
+    public function saveVideos(Request $request)
+    {
+        $data = $request->all();
+        foreach ($data as $video) {
+            $id = Video::whereRaw('bangumi_id = ? and part = ?', [$video['bangumiId'], $video['part']])->select('id')->first();
+            if (is_null($id)) {
+                Video::create([
+                    'bangumi_id' => $video['bangumiId'],
+                    'part' => $video['part'],
+                    'name' => $video['name'],
+                    'url' => $video['url'] ? $video['url'] : '',
+                    'resource' => $video['resource'] ? json_encode($video['resource']) : '',
+                    'poster' => $video['poster']
+                ]);
+            } else {
+                Video::where('id', $id)->update([
+                    'bangumi_id' => $video['bangumiId'],
+                    'part' => $video['part'],
+                    'name' => $video['name'],
+                    'url' => $video['url'] ? $video['url'] : '',
+                    'resource' => $video['resource'] ? json_encode($video['resource']) : '',
+                    'poster' => $video['poster']
+                ]);
+            }
+        }
+    }
 }
