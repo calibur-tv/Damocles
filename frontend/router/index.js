@@ -53,6 +53,11 @@ export default new Router({
       component: require('view/video/create').default
     },
     {
+      path: '/trail/words',
+      name: '高危词',
+      component: require('view/trail/words').default
+    },
+    {
       path: '/admin/user',
       name: '管理员',
       component: require('view/admin/user').default

@@ -52,6 +52,14 @@
 
     <el-submenu index="4">
       <template slot="title">
+        <i class="el-icon-view"></i>
+        <span slot="title">审核</span>
+      </template>
+      <el-menu-item index="/trail/words">高危词</el-menu-item>
+    </el-submenu>
+
+    <el-submenu index="5">
+      <template slot="title">
         <i class="el-icon-setting"></i>
         <span slot="title">设置</span>
       </template>

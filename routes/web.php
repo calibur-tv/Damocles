@@ -80,4 +80,16 @@ Route::group(['middleware' => ['auth']], function ()
             Route::post('/toggle', 'ImageController@loopToggle');
         });
     });
+
+    Route::group(['prefix' => 'trial'], function ()
+    {
+        Route::group(['prefix' => 'blackwords'], function ()
+        {
+            Route::get('/list', 'TrialController@blackwords');
+
+            Route::post('/delete', 'TrialController@deleteWords');
+
+            Route::post('/add', 'TrialController@addWords');
+        });
+    });
 });
