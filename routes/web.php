@@ -91,5 +91,15 @@ Route::group(['middleware' => ['auth']], function ()
 
             Route::post('/add', 'TrialController@addWords');
         });
+
+        Route::group(['prefix' => 'users'], function ()
+        {
+            Route::get('/list', 'TrialController@users');
+        });
+
+        Route::group(['prefix' => 'posts'], function ()
+        {
+            Route::get('/list', 'TrialController@posts');
+        });
     });
 });

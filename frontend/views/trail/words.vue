@@ -32,7 +32,7 @@
     data () {
       return {
         list: [],
-        loading: false
+        loading: true
       }
     },
     created () {
@@ -41,7 +41,8 @@
     methods: {
       getWords() {
         this.$http.get('/trial/blackwords/list').then((res) => {
-          this.list = res
+          this.list = res;
+          this.loading = false;
         })
       },
       addWords() {

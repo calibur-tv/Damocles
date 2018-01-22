@@ -58,6 +58,16 @@ export default new Router({
       component: require('view/trail/words').default
     },
     {
+      path: '/trail/users',
+      name: '用户审核',
+      component: require('view/trail/users').default
+    },
+    {
+      path: '/trail/posts',
+      name: '帖子审核',
+      component: require('view/trail/posts').default
+    },
+    {
       path: '/admin/user',
       name: '管理员',
       component: require('view/admin/user').default

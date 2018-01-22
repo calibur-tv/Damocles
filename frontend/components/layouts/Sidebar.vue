@@ -56,6 +56,8 @@
         <span slot="title">审核</span>
       </template>
       <el-menu-item index="/trail/words">高危词</el-menu-item>
+      <el-menu-item index="/trail/users">用户审核</el-menu-item>
+      <el-menu-item index="/trail/posts">帖子审核</el-menu-item>
     </el-submenu>
 
     <el-submenu index="5">
