@@ -71,7 +71,7 @@ class TrialController extends Controller
         Redis::DEL('post_'.$id);
         Redis::ZREM('post_how_ids', $id);
         Redis::ZREM('post_new_ids', $id);
-        Redis::ZREM('bangumi_'.$post->bangumi_id.'_posts_new_ids');
+        Redis::ZREM('bangumi_'.$post->bangumi_id.'_posts_new_ids', $id);
 
         $post->delete();
     }
