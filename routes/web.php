@@ -95,11 +95,21 @@ Route::group(['middleware' => ['auth']], function ()
         Route::group(['prefix' => 'users'], function ()
         {
             Route::get('/list', 'TrialController@users');
+
+            Route::post('/delSomething', 'TrialController@delUserSomething');
+
+            Route::post('/delete', 'TrialController@deleteUser');
+
+            Route::post('/recover', 'TrialController@recoverUser');
         });
 
         Route::group(['prefix' => 'posts'], function ()
         {
             Route::get('/list', 'TrialController@posts');
+
+            Route::post('/delete', 'TrialController@deletePost');
+
+            Route::post('/deleteImage', 'TrialController@deletePostImage');
         });
     });
 });
