@@ -5,7 +5,7 @@
 <template>
   <section>
     <header>
-      <el-button type="primary" icon="plus" size="large" @click="addWords">添加高危词</el-button>
+      <el-button type="primary" icon="plus" size="large" @click="showCreateModal = true">添加高危词</el-button>
     </header>
     <el-table
       :data="list"
@@ -23,6 +23,17 @@
         </template>
       </el-table-column>
     </el-table>
+    <v-modal
+      v-model="showCreateModal"
+      header-text="添加高危词"
+      @submit="addWords">
+      <el-input
+        type="textarea"
+        :rows="20"
+        placeholder="一行一个，不留空行"
+        v-model="words">
+      </el-input>
+    </v-modal>
   </section>
 </template>
 
@@ -32,7 +43,9 @@
     data () {
       return {
         list: [],
-        loading: true
+        loading: true,
+        showCreateModal: false,
+        words: ''
       }
     },
     created () {
@@ -46,20 +59,20 @@
         })
       },
       addWords() {
-        this.$prompt('内容', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消'
-        }).then(({ value }) => {
-          if (value) {
-            this.$http.post('trial/blackwords/add', {
-              words: value
-            }).then(() => {
-              this.list.unshift(value)
-            }).catch(() => {
-              this.$message.error('操作错误，请联系管理员')
-            });
+        const arr = []
+        this.words.split('\n').forEach(item => {
+          if (item && this.list.indexOf(item) === -1) {
+            arr.push(item)
           }
-        }).catch(() => {});
+        })
+        this.$http.post('trial/blackwords/add', {
+          words: arr
+        }).then(() => {
+          this.list.concat(arr)
+          this.showCreateModal = false;
+        }).catch(() => {
+          this.$message.error('操作错误，请联系管理员')
+        });
       },
       delWords(value) {
         this.$confirm('此操作不可逆, 是否继续?', '提示', {
