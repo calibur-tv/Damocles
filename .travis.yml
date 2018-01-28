@@ -3,11 +3,16 @@ language: php
 php:
   - 7.1
 
+cache:
+  yarn: true
+
 before_install:
   - openssl aes-256-cbc -K $encrypted_b7d425d3bc0a_key -iv $encrypted_b7d425d3bc0a_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
   - chmod 600 ~/.ssh/id_rsa
   - echo -e "Host $STAGING_SERVER\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - echo -e "Host $PRODUCTION_SERVER\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.3.2
+  - export PATH="$HOME/.yarn/bin:$PATH"
 
 script:
 - echo "hello world"
