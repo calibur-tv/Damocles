@@ -18,7 +18,7 @@ deploy:
     script:
       ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/admin && git pull' &&
       ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/admin && composer install' &&
-      ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/admin && npm install' &&
+      ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/admin && yarn' &&
       ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/admin && npm run build' &&
       ssh -p $PORT $USER@$STAGING_SERVER 'cd /var/www/admin && npm run publish'
     on:
@@ -28,7 +28,7 @@ deploy:
     script:
       ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/admin && git pull' &&
       ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/admin && composer install' &&
-      ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/admin && npm install' &&
+      ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/admin && yarn' &&
       ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/admin && npm run build' &&
       ssh -p $PORT $USER@$PRODUCTION_SERVER 'cd /var/www/admin && npm run publish'
     on:

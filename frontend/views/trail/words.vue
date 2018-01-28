@@ -8,7 +8,7 @@
       <el-button type="primary" icon="plus" size="large" @click="showCreateModal = true">添加高危词</el-button>
     </header>
     <el-table
-      :data="list"
+      :data="filter"
       class="main-view"
       v-loading="loading"
       border>
@@ -23,6 +23,17 @@
         </template>
       </el-table-column>
     </el-table>
+    <footer>
+      <el-pagination
+        layout="total, prev, pager, next, jumper"
+        :current-page="pagination.curPage"
+        :page-size="pagination.pageSize"
+        :pageCount="pagination.totalPage"
+        :total="list.length"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      ></el-pagination>
+    </footer>
     <v-modal
       v-model="showCreateModal"
       header-text="添加高危词"
@@ -39,13 +50,23 @@
 
 <script>
   export default {
-    name: 'v-',
+    computed: {
+      filter () {
+        const begin = (this.pagination.curPage - 1) * this.pagination.pageSize;
+        return this.list.slice(begin, begin + this.pagination.pageSize)
+      }
+    },
     data () {
       return {
         list: [],
         loading: true,
         showCreateModal: false,
-        words: ''
+        words: '',
+        pagination: {
+          totalPage: 0,
+          pageSize: 1000,
+          curPage: 1
+        },
       }
     },
     created () {
@@ -57,6 +78,12 @@
           this.list = res;
           this.loading = false;
         })
+      },
+      handleSizeChange(val) {
+        this.pagination.pageSize = val
+      },
+      handleCurrentChange(val) {
+        this.pagination.curPage = val
       },
       addWords() {
         const arr = []
@@ -83,7 +110,7 @@
           this.$http.post('trial/blackwords/delete', {
             words: value.row
           }).then(() => {
-            this.list.splice(value.$index, 1);
+            this.list.splice(value.$index + (this.pagination.curPage - 1) * this.pagination.pageSize, 1);
           }).catch(() => {
             this.$message.error('操作错误，请联系管理员')
           });
