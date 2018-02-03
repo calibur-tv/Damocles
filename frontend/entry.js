@@ -6,6 +6,7 @@ import Helpers from './utils/helpers'
 import Element from 'element-ui'
 import Modal from 'component/modal'
 import 'lodash'
+import Pagination from './utils/pagination'
 
 Vue.use(Element)
 Vue.use(Helpers)

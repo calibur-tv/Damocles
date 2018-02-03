@@ -5,10 +5,10 @@
 <template>
   <section>
     <header>
-      <el-button type="primary" icon="plus" size="large" @click="addWords">添加高危词</el-button>
+      <el-button type="primary" icon="plus" size="large" @click="showCreateModal = true">添加高危词</el-button>
     </header>
     <el-table
-      :data="list"
+      :data="filter"
       class="main-view"
       v-loading="loading"
       border>
@@ -23,16 +23,50 @@
         </template>
       </el-table-column>
     </el-table>
+    <footer>
+      <el-pagination
+        layout="total, prev, pager, next, jumper"
+        :current-page="pagination.curPage"
+        :page-size="pagination.pageSize"
+        :pageCount="pagination.totalPage"
+        :total="list.length"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      ></el-pagination>
+    </footer>
+    <v-modal
+      v-model="showCreateModal"
+      header-text="添加高危词"
+      @submit="addWords">
+      <el-input
+        type="textarea"
+        :rows="20"
+        placeholder="一行一个，不留空行"
+        v-model="words">
+      </el-input>
+    </v-modal>
   </section>
 </template>
 
 <script>
   export default {
-    name: 'v-',
+    computed: {
+      filter () {
+        const begin = (this.pagination.curPage - 1) * this.pagination.pageSize;
+        return this.list.slice(begin, begin + this.pagination.pageSize)
+      }
+    },
     data () {
       return {
         list: [],
-        loading: false
+        loading: true,
+        showCreateModal: false,
+        words: '',
+        pagination: {
+          totalPage: 0,
+          pageSize: 1000,
+          curPage: 1
+        },
       }
     },
     created () {
@@ -41,27 +75,34 @@
     methods: {
       getWords() {
         this.$http.get('/trial/blackwords/list').then((res) => {
-          this.list = res
+          this.list = res;
+          this.loading = false;
         })
       },
+      handleSizeChange(val) {
+        this.pagination.pageSize = val
+      },
+      handleCurrentChange(val) {
+        this.pagination.curPage = val
+      },
       addWords() {
-        this.$prompt('内容', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消'
-        }).then(({ value }) => {
-          if (value) {
-            this.$http.post('trial/blackwords/add', {
-              words: value
-            }).then(() => {
-              this.list.unshift(value)
-            }).catch(() => {
-              this.$message.error('操作错误，请联系管理员')
-            });
+        const arr = []
+        this.words.split('\n').forEach(item => {
+          if (item && this.list.indexOf(item) === -1) {
+            arr.push(item)
           }
-        }).catch(() => {});
+        })
+        this.$http.post('trial/blackwords/add', {
+          words: arr
+        }).then(() => {
+          this.list.concat(arr)
+          this.showCreateModal = false;
+        }).catch(() => {
+          this.$message.error('操作错误，请联系管理员')
+        });
       },
       delWords(value) {
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        this.$confirm('此操作不可逆, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -69,7 +110,7 @@
           this.$http.post('trial/blackwords/delete', {
             words: value.row
           }).then(() => {
-            this.list.splice(value.$index, 1);
+            this.list.splice(value.$index + (this.pagination.curPage - 1) * this.pagination.pageSize, 1);
           }).catch(() => {
             this.$message.error('操作错误，请联系管理员')
           });
