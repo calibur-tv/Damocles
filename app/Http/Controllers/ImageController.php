@@ -14,7 +14,7 @@ class ImageController extends Controller
     {
         $auth = new \App\Http\Services\Qiniu\Auth();
 
-        return $auth->uploadToken(env('QINIU_BUCKET'));
+        return $auth->uploadToken();
     }
     
     public function loopShow()

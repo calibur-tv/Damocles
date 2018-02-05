@@ -28,6 +28,14 @@ return [
 
     'cloud' => env('FILESYSTEM_CLOUD', 's3'),
 
+    'qiniu' => [
+        'driver'     => 'qiniu',
+        'access_key' => env('QINIU_ACCESS_KEY'),
+        'secret_key' => env('QINIU_SECRET_KEY'),
+        'bucket'     => env('QINIU_BUCKET'),
+        'domain'     => env('QINIU_DOMAIN'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
@@ -62,15 +70,6 @@ return [
             'region' => env('AWS_REGION'),
             'bucket' => env('AWS_BUCKET'),
         ],
-
-        'qiniu' => [
-            'driver'     => 'qiniu',
-            'access_key' => env('QINIU_ACCESS_KEY'),
-            'secret_key' => env('QINIU_SECRET_KEY'),
-            'bucket'     => env('QINIU_BUCKET'),
-            'domain'     => env('QINIU_DOMAIN'),
-        ],
-
     ],
 
 ];
