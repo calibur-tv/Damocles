@@ -9,8 +9,9 @@ final class Auth
 
     public function __construct()
     {
-        $this->accessKey = env('QINIU_ACCESS_KEY');
-        $this->secretKey = env('QINIU_SECRET_KEY');
+        $this->accessKey = config('filesystems.qiniu.access_key');
+        $this->secretKey = config('filesystems.qiniu.secret_key');
+        $this->bucket = config('filesystems.qiniu.bucket');
     }
 
     public function getAccessKey()
@@ -70,10 +71,10 @@ final class Auth
         return "$baseUrl&token=$token";
     }
 
-    public function uploadToken($bucket, $key = null, $expires = 3600, $policy = null, $strictPolicy = true)
+    public function uploadToken($key = null, $expires = 3600, $policy = null, $strictPolicy = true)
     {
         $deadline = time() + $expires;
-        $scope = $bucket;
+        $scope = $this->bucket;
         if ($key !== null) {
             $scope .= ':' . $key;
         }
