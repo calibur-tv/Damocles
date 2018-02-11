@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bangumi;
 use App\Models\BangumiCollection;
+use App\Models\MixinSearch;
 use App\Models\Video;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -63,6 +64,18 @@ class BangumiController extends Controller
             'released_time' => time(),
             'released_video_id' => $video_id
         ]);
+
+        $searchId = MixinSearch::whereRaw('type_id = ? and modal_id = ?', [2, $bangumi_id])
+            ->pluck('id')
+            ->first();
+
+        if (!is_null($searchId))
+        {
+            MixinSearch::where('id', $searchId)->increment('score', 1);
+            MixinSearch::where('id', $searchId)->update([
+                'updated_at' => time()
+            ]);
+        }
 
         return response('success');
     }
@@ -130,14 +143,57 @@ class BangumiController extends Controller
             $rollback = true;
         }
 
-        $rollback ? DB::rollBack() : DB::commit();
+        if ($rollback)
+        {
+            DB::rollBack();
+        }
+        else
+        {
+            DB::commit();
+
+            $searchId = MixinSearch::whereRaw('type_id = ? and modal_id = ?', [2, $bangumi_id])
+                ->pluck('id')
+                ->first();
+
+            if (!is_null($searchId))
+            {
+                MixinSearch::where('id', $searchId)->update([
+                    'title' => $request->get('name'),
+                    'content' => $request->get('alias')
+                ]);
+            }
+        }
     }
 
     public function delete(Request $request)
     {
-        $bangumi = Bangumi::withTrashed()->find($request->get('id'));
+        $hasDeleted = $request->get('isDeleted') ;
+        $bangumi_id = $request->get('id');
+        $bangumi = Bangumi::withTrashed()->find($bangumi_id);
 
-        $request->get('isDeleted') ? $bangumi->restore() : $bangumi->delete();
+        if ($hasDeleted)
+        {
+            $bangumi->restore();
+
+            $now = time();
+
+            MixinSearch::create([
+                'title' => $bangumi->name,
+                'content' => $bangumi->alias === 'null' ? '' : json_decode($bangumi->alias)->search,
+                'type_id' => 2,
+                'modal_id' => $bangumi_id,
+                'url' => '/bangumi/' . $bangumi_id,
+                'created_at' => $now,
+                'updated_at' => $now
+            ]);
+        }
+        else
+        {
+            $bangumi->delete();
+
+            MixinSearch::whereRaw('type_id = ? and modal_id = ?', [2, $bangumi_id])
+                ->delete();
+        }
     }
 
     public function list()
