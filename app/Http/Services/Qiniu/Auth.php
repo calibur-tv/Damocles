@@ -22,12 +22,12 @@ final class Auth
     public function sign($data)
     {
         $hmac = hash_hmac('sha1', $data, $this->secretKey, true);
-        return $this->accessKey . ':' . \Qiniu\base64_urlSafeEncode($hmac);
+        return $this->accessKey . ':' . $this->base64_urlSafeEncode($hmac);
     }
 
     public function signWithData($data)
     {
-        $encodedData = \Qiniu\base64_urlSafeEncode($data);
+        $encodedData = $this->base64_urlSafeEncode($data);
         return $this->sign($encodedData) . ':' . $encodedData;
     }
 
@@ -183,5 +183,12 @@ final class Auth
         $sign = $this->sign($toSignStr);
         $auth = 'Qiniu ' . $sign;
         return array('Authorization' => $auth);
+    }
+
+    protected function base64_urlSafeEncode($data)
+    {
+        $find = array('+', '/');
+        $replace = array('-', '_');
+        return str_replace($find, $replace, base64_encode($data));
     }
 }
