@@ -76,7 +76,7 @@ class VideoController extends Controller
     {
         $data = $request->all();
         foreach ($data as $video) {
-            $id = Video::whereRaw('bangumi_id = ? and part = ?', [$video['bangumiId'], $video['part']])->select('id')->first();
+            $id = Video::whereRaw('bangumi_id = ? and part = ?', [$video['bangumiId'], $video['part']])->pluck('id')->first();
             if (is_null($id)) {
                 Video::create([
                     'bangumi_id' => $video['bangumiId'],
