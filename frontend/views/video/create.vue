@@ -401,53 +401,6 @@
           console.log(err);
           this.$message.error('保存失败，请联系管理员');
         });
-        this.$refs.form.validate((valid) => {
-          if (valid) {
-            let validate = true
-            const keys = Object.keys(this.list)
-            const length = this.form.parts[1] - this.form.parts[0] + 1
-            if (!keys.length) {
-              this.$message.error('请先选择视频并填写视频信息');
-              return
-            }
-            if (keys.length < length) {
-              this.$message.error('视频个数不够');
-              return
-            }
-            keys.forEach(uid => {
-              const video = this.list[uid]
-              if (!video.part) {
-                this.$message.error(`视频《${video.name}》集数缺失`);
-                validate = false
-                return
-              }
-              if (!video.poster) {
-                this.$message.error(`视频《${video.name}》封面缺失`);
-                validate = false
-                return
-              }
-              if (!video.name) {
-                this.$message.error(`视频《${video.name}》名称缺失`);
-                validate = false
-              }
-            })
-            if (validate) {
-              if (!this.form.uploaded) {
-                this.form.uploaded = true
-                this.$refs.uploader.submit()
-              } else {
-                Object.keys(this.list).forEach(uid => {
-                  const video = this.list[uid]
-                  if (!video.success) {
-                    this.saveVideoToServer(video)
-                  }
-                })
-              }
-            }
-          } else {
-            return false;
-          }
-        });
       }
     }
   }
