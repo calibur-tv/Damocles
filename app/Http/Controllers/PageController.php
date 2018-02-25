@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Menu;
 use App\Models\Bangumi;
+use App\Models\Post;
+use App\Models\PostImages;
 use App\Models\Tag;
+use App\Models\User;
 use App\Models\Video;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -14,6 +17,19 @@ class PageController extends Controller
     public function index()
     {
         return Auth::check() ? view('index') : view('login');
+    }
+
+    public function indexData()
+    {
+        $totalUser = User::count();
+        $totalPost = Post::count();
+        $totalImage = PostImages::count();
+
+        return response()->json(['data' => [
+            'total_user' => $totalUser,
+            'total_post' => $totalPost,
+            'total_image' => $totalImage
+        ]], 200);
     }
 
     public function bangumi()

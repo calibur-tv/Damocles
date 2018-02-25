@@ -53,6 +53,13 @@ class TrialController extends Controller
             ]);
     }
 
+    public function passUser(Request $request)
+    {
+        User::where('id', $request->get('id'))->update([
+            'state' => 0
+        ]);
+    }
+
     public function deleteUser(Request $request)
     {
         User::where('id', $request->get('id'))->delete();
@@ -74,6 +81,15 @@ class TrialController extends Controller
         Redis::ZREM('bangumi_'.$post->bangumi_id.'_posts_new_ids', $id);
 
         $post->delete();
+    }
+
+    public function passPost(Request $request)
+    {
+        $id = $request->get('id');
+        $post = Post::where('id', $id)->first();
+
+        $post->state = 7;
+        $post->save();
     }
 
     public function deletePostImage(Request $request)

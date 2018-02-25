@@ -2,6 +2,8 @@
 
 Route::get('/', 'PageController@index');
 
+Route::get('/indexData', 'PageController@indexData');
+
 Route::group(['prefix' => 'auth'], function ()
 {
     Route::get('login', 'LoginController@showLoginForm')->name('login');
@@ -98,6 +100,8 @@ Route::group(['middleware' => ['auth']], function ()
 
             Route::post('/delSomething', 'TrialController@delUserSomething');
 
+            Route::post('/pass', 'TrialController@passUser');
+
             Route::post('/delete', 'TrialController@deleteUser');
 
             Route::post('/recover', 'TrialController@recoverUser');
@@ -106,6 +110,8 @@ Route::group(['middleware' => ['auth']], function ()
         Route::group(['prefix' => 'posts'], function ()
         {
             Route::get('/list', 'TrialController@posts');
+
+            Route::post('/pass', 'TrialController@passPost');
 
             Route::post('/delete', 'TrialController@deletePost');
 
