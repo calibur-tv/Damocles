@@ -34,8 +34,9 @@
           <img v-for="(item, index) in scope.row.images"  @click="deleteImage(item.id, item.src, scope.$index, index)" :src="$resize(item.src, { width: 150 })" alt="">
         </template>
       </el-table-column>
-      <el-table-column width="200" label="操作">
+      <el-table-column width="240" label="操作">
         <template slot-scope="scope">
+          <el-button size="small" type="default" icon="edit" @click="passPost(scope.$index, scope.row.id)">通过</el-button>
           <el-button size="small" type="primary" icon="edit" @click="delPost(scope.$index, scope.row.id)">删帖</el-button>
           <el-button size="small" type="danger" icon="edit" @click="delUser(scope.$index, scope.row.user.id)">删人</el-button>
         </template>
@@ -87,6 +88,13 @@
             this.$message.error('操作错误，请联系管理员');
           });
         }).catch(() => {});
+      },
+      passPost (index, id) {
+        this.$http.post('trial/posts/pass', { id }).then(() => {
+          this.list.splice(index, 1);
+        }).catch(() => {
+          this.$message.error('操作错误，请联系管理员');
+        });
       },
       deleteImage (id, src, index, subIndex) {
         if (!src) {

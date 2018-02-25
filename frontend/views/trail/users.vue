@@ -36,14 +36,15 @@
           <span v-text="scope.row.signature"></span>
         </template>
       </el-table-column>
-      <el-table-column width="400" label="操作">
+      <el-table-column width="440" label="操作">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" icon="edit" @click="delSomething(scope.$index, scope.row.id,  scope.row.zone, 'nickname')">昵称</el-button>
-          <el-button size="small" type="primary" icon="edit" @click="delSomething(scope.$index, scope.row.id,  '', 'avatar')">头像</el-button>
-          <el-button size="small" type="primary" icon="edit" @click="delSomething(scope.$index, scope.row.id,  '', 'banner')">封面</el-button>
-          <el-button size="small" type="primary" icon="edit" @click="delSomething(scope.$index, scope.row.id,  '', 'signature')">签名</el-button>
-          <el-button size="small" type="danger" icon="edit" @click="delUser(scope.$index, scope.row.id)" v-if="!scope.row.deleted_at">封禁</el-button>
-          <el-button size="small" type="success" icon="edit" @click="recoverUser(scope.$index, scope.row.id)" v-else>解禁</el-button>
+          <el-button size="small" type="default" @click="passUser(scope.$index, scope.row.id)">通过</el-button>
+          <el-button size="small" type="primary" @click="delSomething(scope.$index, scope.row.id,  scope.row.zone, 'nickname')">昵称</el-button>
+          <el-button size="small" type="primary" @click="delSomething(scope.$index, scope.row.id,  '', 'avatar')">头像</el-button>
+          <el-button size="small" type="primary" @click="delSomething(scope.$index, scope.row.id,  '', 'banner')">封面</el-button>
+          <el-button size="small" type="primary" @click="delSomething(scope.$index, scope.row.id,  '', 'signature')">签名</el-button>
+          <el-button size="small" type="danger" @click="delUser(scope.$index, scope.row.id)" v-if="!scope.row.deleted_at">封禁</el-button>
+          <el-button size="small" type="success" @click="recoverUser(scope.$index, scope.row.id)" v-else>解禁</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -110,6 +111,13 @@
             this.$message.error('操作错误，请联系管理员');
           });
         }).catch(() => {});
+      },
+      passUser (index, id) {
+        this.$http.post('trial/users/pass', { id }).then(() => {
+          this.list.splice(index, 1);
+        }).catch(() => {
+          this.$message.error('操作错误，请联系管理员');
+        });
       }
     }
   }
