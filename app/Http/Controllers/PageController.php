@@ -22,7 +22,7 @@ class PageController extends Controller
     public function indexData()
     {
         $totalUser = User::count();
-        $totalPost = Post::count();
+        $totalPost = Post::where('parent_id', 0)->count();
         $totalImage = PostImages::count();
 
         return response()->json(['data' => [
