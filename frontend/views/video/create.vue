@@ -209,7 +209,7 @@
             callback()
           }
         },
-        options: ['jpg', 'jpeg', 'png'],
+        options: ['jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG'],
         form: {
           bangumiId: '',
           parts: [1, 1],
