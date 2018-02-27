@@ -24,11 +24,15 @@ class PageController extends Controller
         $totalUser = User::count();
         $totalPost = Post::where('parent_id', 0)->count();
         $totalImage = PostImages::count();
+        $totalBangumi = Bangumi::count();
+        $totalTag = Tag::count();
 
         return response()->json(['data' => [
             'total_user' => $totalUser,
             'total_post' => $totalPost,
-            'total_image' => $totalImage
+            'total_image' => $totalImage,
+            'total_bangumi' => $totalBangumi,
+            'total_tag' => $totalTag
         ]], 200);
     }
 

@@ -118,4 +118,13 @@ Route::group(['middleware' => ['auth']], function ()
             Route::post('/deleteImage', 'TrialController@deletePostImage');
         });
     });
+
+    Route::group(['prefix' => 'cartoonRole'], function ()
+    {
+        Route::get('/list', 'CartoonRoleController@list');
+
+        Route::post('/create', 'CartoonRoleController@create');
+
+        Route::post('/edit', 'CartoonRoleController@editVideos');
+    });
 });

@@ -53,6 +53,21 @@ export default new Router({
       component: require('view/video/create').default
     },
     {
+      path: '/cartoonRole/list',
+      name: '角色列表',
+      component: require('view/cartoonRole/list').default
+    },
+    {
+      path: '/cartoonRole/create',
+      name: '创建角色',
+      component: require('view/cartoonRole/show').default
+    },
+    {
+      path: '/cartoonRole/edit/:id(\\d+)',
+      name: '编辑角色',
+      component: require('view/cartoonRole/show').default
+    },
+    {
       path: '/trail/words',
       name: '高危词',
       component: require('view/trail/words').default

@@ -1,0 +1,98 @@
+<template>
+  <section>
+    <header>
+      <router-link to="/cartoonRole/create">
+        <el-button type="primary" icon="plus" size="large">新建角色</el-button>
+      </router-link>
+    </header>
+    <el-table
+      :data="filter"
+      class="main-view"
+      v-loading="loading"
+      border
+      highlight-current-row>
+      <el-table-column
+        label="名称">
+        <template slot-scope="scope">
+          <a :href="$href(`video/${scope.row.id}`)" target="_blank">{{ scope.row.name }}</a>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="所属番剧">
+        <template slot-scope="scope">
+          <a :href="$href(`bangumi/${scope.row.bangumi_id}`)" target="_blank">{{ scope.row.bname }}</a>
+        </template>
+      </el-table-column>
+      <el-table-column
+        sortable
+        width="110"
+        prop="fans_count"
+        label="粉丝数">
+      </el-table-column>
+      <el-table-column
+        sortable
+        width="110"
+        prop="star_count"
+        label="喜欢数">
+      </el-table-column>
+      <el-table-column
+        width="200"
+        label="操作">
+      </el-table-column>
+    </el-table>
+    <footer>
+      <el-pagination
+        layout="total, sizes, prev, pager, next, jumper"
+        :current-page="pagination.curPage"
+        :page-sizes="[24, 50, 100]"
+        :page-size="pagination.pageSize"
+        :pageCount="pagination.totalPage"
+        :total="list.length"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      ></el-pagination>
+    </footer>
+  </section>
+</template>
+
+<script>
+  export default {
+    computed: {
+      filter () {
+        const begin = (this.pagination.curPage - 1) * this.pagination.pageSize;
+        return this.list.slice(begin, begin + this.pagination.pageSize)
+      }
+    },
+    data () {
+      return {
+        loading: true,
+        list: [],
+        bangumis: [],
+        pagination: {
+          totalPage: 0,
+          pageSize: 24,
+          curPage: 1
+        }
+      }
+    },
+    created () {
+      this.getList()
+    },
+    methods: {
+      getList () {
+        this.$http.get('/cartoonRole/list').then((data) => {
+          this.list = data.role
+          this.bangumis = data.bangumi
+          this.pagination.totalPage =  Math.ceil(this.list.length / this.pagination.pageSize)
+          this.loading = false
+        })
+      },
+      handleSizeChange(val) {
+        this.pagination.pageSize = val
+      },
+      handleCurrentChange(val) {
+        this.pagination.curPage = val
+      }
+    }
+  }
+</script>
