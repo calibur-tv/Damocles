@@ -52,6 +52,14 @@
 
     <el-submenu index="4">
       <template slot="title">
+        <i class="el-icon-location-outline"></i>
+        <span slot="title">角色</span>
+      </template>
+      <el-menu-item index="/cartoonRole/list">角色列表</el-menu-item>
+    </el-submenu>
+
+    <el-submenu index="5">
+      <template slot="title">
         <i class="el-icon-view"></i>
         <span slot="title">审核</span>
       </template>
@@ -60,7 +68,7 @@
       <el-menu-item index="/trail/posts">帖子审核</el-menu-item>
     </el-submenu>
 
-    <el-submenu index="5">
+    <el-submenu index="6">
       <template slot="title">
         <i class="el-icon-setting"></i>
         <span slot="title">设置</span>
