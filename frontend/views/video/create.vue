@@ -93,7 +93,7 @@
           </el-tooltip>
         </el-col>
       </el-form-item>
-      <el-form-item label="封面后缀">
+      <el-form-item label="封面格式">
         <el-col :span="20">
           <el-select v-model="form.suffix" :disabled="saver.suffix" placeholder="请选择">
             <el-option
@@ -115,6 +115,26 @@
       </el-form-item>
       <el-form-item>
         <el-alert title="大部分视频封面图的格式是相同的，部分不相同的格式可以在之后重置" type="info"></el-alert>
+      </el-form-item>
+      <el-form-item label="视频格式">
+        <el-col :span="20">
+          <el-select v-model="form.format" :disabled="saver.format" placeholder="请选择">
+            <el-option
+              v-for="item in videoFormat"
+              :key="item"
+              :label="item"
+              :value="item">
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="3" :offset="1">
+          <el-tooltip effect="dark" content="确认后不可修改" placement="top">
+            <el-button @click="handleSaverFormat"
+                       type="primary"
+                       :disabled="saver.format"
+            >确认</el-button>
+          </el-tooltip>
+        </el-col>
       </el-form-item>
       <el-form-item label="每集名称"
                     prop="names"
@@ -162,6 +182,7 @@
                       saver.names &&
                       saver.suffix &&
                       saver.parts &&
+                      saver.format &&
                       saver.videos">
         <el-form-item label="视频预览">
           <el-card class="video-preview" v-for="(part, index) in (form.parts[1] - form.parts[0] + 1)" :key="part">
@@ -169,7 +190,7 @@
             <div style="padding: 14px;">
               <span>【第 {{ index + form.parts[0] }} 集】{{ form.titles[index] }}</span>
               <div class="bottom clearfix">
-                <a v-if="form.haveSelfResource" :href="`https://video.calibur.tv/bangumi/${form.prefix}/video/720/${index + form.parts[0]}.mp4`" target="_blank">查看视频资源</a>
+                <a v-if="form.haveSelfResource" :href="`https://video.calibur.tv/bangumi/${form.prefix}/video/720/${index + form.parts[0]}.${form.format}`" target="_blank">查看视频资源</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <a v-if="form.urls[index]" :href="form.urls[index]" target="_blank">查看外链资源</a>
               </div>
@@ -210,11 +231,13 @@
           }
         },
         options: ['jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG'],
+        videoFormat: ['mp4', 'flv'],
         form: {
           bangumiId: '',
           parts: [1, 1],
           prefix: '',
           suffix: 'jpg',
+          format: 'mp4',
           names: '',
           videos: '',
           uploaded: false,
@@ -227,6 +250,7 @@
           bangumi: false,
           prefix: false,
           suffix: false,
+          format: false,
           videos: false,
           parts: false,
           names: false
@@ -264,6 +288,9 @@
             this.saver.parts = true
           }
         })
+      },
+      handleSaverFormat () {
+        this.saver.format = true;
       },
       handleSaverSuffix () {
         const arr = [];
@@ -379,7 +406,7 @@
               "video": {
                 "720": {
                   "useLyc": false,
-                  "src": `bangumi/${this.form.prefix}/video/720/${i}.mp4`
+                  "src": `bangumi/${this.form.prefix}/video/720/${i}.${this.form.format}`
                 },
                 "1080": {
                   "useLyc": false,
