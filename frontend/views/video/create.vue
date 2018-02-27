@@ -231,7 +231,7 @@
           }
         },
         options: ['jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG'],
-        videoFormat: ['mp4', 'flv'],
+        videoFormat: ['mp4', 'flv', 'Mp4', 'Flv'],
         form: {
           bangumiId: '',
           parts: [1, 1],
