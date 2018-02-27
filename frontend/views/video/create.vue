@@ -376,7 +376,8 @@
           suffix: false,
           parts: false,
           names: false,
-          video: false
+          video: false,
+          format: false
         }
       },
       changePosterSuffix(index) {
