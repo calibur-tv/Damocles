@@ -8,12 +8,12 @@
       </el-breadcrumb>
     </header>
     <el-form :model="form" :rules="rules" ref="form" label-width="100px" class="main-view">
-      <el-form-item label="橘色名称" prop="name" required>
+      <el-form-item label="角色名称" prop="name" required>
         <el-col :span="8">
           <el-input v-model.trim="form.name" placeholder="中文名"></el-input>
         </el-col>
       </el-form-item>
-      <el-form-item label="橘色别名" prop="alias" required>
+      <el-form-item label="角色别名" prop="alias" required>
         <el-input type="textarea"
                   v-model.trim="form.alias"
                   placeholder="中文名、日文名、英文名... 名字之间以逗号分隔"
@@ -54,16 +54,16 @@
           <el-popover
             ref="popoverAvatar"
             placement="left"
-            width="200"
+            width="100"
             trigger="hover">
-            <img :src="`${$CDNPrefix}${form.avatar}`" alt="">
+            <img :src="$resize($CDNPrefix + form.avatar, { width: 100 })" alt="">
           </el-popover>
           <a type="text" :href="`${$CDNPrefix}${form.avatar}`" target="_blank" v-popover:popoverAvatar>
             <i class="el-icon-view"></i>&nbsp;预览
           </a>
         </el-col>
       </el-form-item>
-      <el-form-item label="橘色简介" prop="intro" required>
+      <el-form-item label="角色简介" prop="intro" required>
         <el-input
           type="textarea"
           :rows="4"

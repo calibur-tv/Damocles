@@ -186,7 +186,7 @@
                       saver.videos">
         <el-form-item label="视频预览">
           <el-card class="video-preview" v-for="(part, index) in (form.parts[1] - form.parts[0] + 1)" :key="part">
-            <img :src="`https://image.calibur.tv/${form.posters[index]}?imageMogr2/auto-orient/strip|imageView2/1/w/600/h/450/format/webp`" class="image">
+            <img :src="$resize($CDNPrefix + form.posters[index], { width: 600, height: 450 })" class="image">
             <div style="padding: 14px;">
               <span>【第 {{ index + form.parts[0] }} 集】{{ form.titles[index] }}</span>
               <div class="bottom clearfix">
