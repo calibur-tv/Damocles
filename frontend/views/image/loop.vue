@@ -223,7 +223,7 @@
         if (!isLt2M) {
           this.$message.error('上传头像图片大小不能超过 2MB!');
         }
-        this.uploadHeaders.key = `loop/${new Date().getTime()}-${Math.random().toString(36).substring(3, 6)}-${file.name}`;
+        this.uploadHeaders.key = `loop/${new Date().getTime()}-${Math.random().toString(36).substring(3, 6)}.${file.type.split('/').pop()}`;
         return isFormat && isLt2M;
       },
       handleCreateLoopSuccess(res, file) {

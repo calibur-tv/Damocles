@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class CartoonRoleController extends Controller
 {
+    public function show(Request $request)
+    {
+        return CartoonRole::find($request->get('id'));
+    }
+
     public function create(Request $request)
     {
         return CartoonRole::insertGetId([
