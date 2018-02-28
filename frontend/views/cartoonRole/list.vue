@@ -14,7 +14,10 @@
       <el-table-column
         label="名称">
         <template slot-scope="scope">
-          <a :href="$href(`bangumi/${scope.row.bangumi_id}/role/${scope.row.id}`)" target="_blank">{{ scope.row.name }}</a>
+          <a :href="$href(`bangumi/${scope.row.bangumi_id}/role/${scope.row.id}`)" target="_blank">
+            <img :src="$resize(`${$CDNPrefix}${scope.row.avatar}`, { width: 100 })" alt="">
+            {{ scope.row.name }}
+          </a>
         </template>
       </el-table-column>
       <el-table-column
@@ -22,6 +25,11 @@
         <template slot-scope="scope">
           <a :href="$href(`bangumi/${scope.row.bangumi_id}`)" target="_blank">{{ computeBangumi(scope.row.bangumi_id) }}</a>
         </template>
+      </el-table-column>
+      <el-table-column
+        width="300"
+        prop="intro"
+        label="简介">
       </el-table-column>
       <el-table-column
         sortable
