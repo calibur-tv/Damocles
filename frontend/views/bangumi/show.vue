@@ -158,7 +158,7 @@
       </el-form-item>
       <el-form-item>
         <el-col :span="3" :offset="21">
-          <el-button type="primary" @click="submitForm">立即创建</el-button>
+          <el-button type="primary" @click="submitForm">{{ id ? '确认编辑' : '立即创建' }}</el-button>
         </el-col>
       </el-form-item>
     </el-form>
@@ -388,7 +388,7 @@
           this.$message.info('上传中，请稍候...');
         }
 
-        this.uploadHeaders.key = `bangumi/avatar/${new Date().getTime()}/${file.name}`;
+        this.uploadHeaders.key = `bangumi/avatar/${new Date().getTime()}-${Math.random().toString(36).substring(3, 6)}.${file.type.split('/').pop()}`;
         return isFormat && isLt2M;
       },
       beforeBannerUpload(file) {
@@ -405,7 +405,7 @@
           this.$message.info('上传中，请稍候...');
         }
 
-        this.uploadHeaders.key = `bangumi/banner/${new Date().getTime()}/${file.name}`;
+        this.uploadHeaders.key = `bangumi/banner/${new Date().getTime()}-${Math.random().toString(36).substring(3, 6)}.${file.type.split('/').pop()}`;
         return isFormat && isLt1M;
       },
       handleAvatarSuccess(res, file) {

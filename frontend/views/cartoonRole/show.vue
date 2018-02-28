@@ -73,7 +73,7 @@
       </el-form-item>
       <el-form-item>
         <el-col :span="3" :offset="21">
-          <el-button type="primary" @click="submitForm">立即创建</el-button>
+          <el-button type="primary" @click="submitForm">{{ id ? '确认编辑' : '立即创建' }}</el-button>
         </el-col>
       </el-form-item>
     </el-form>
@@ -132,23 +132,21 @@
       }
     },
     created () {
-      this.getBangumiById()
+      this.getRoleById()
       this.getUptoken()
       this.getBangumis()
-      this.getTags()
     },
     methods: {
-      getBangumiById () {
+      getRoleById () {
         if (!this.id) {
           return
         }
 
-        this.$http.get('/bangumi/item', {
+        this.$http.get('/cartoonRole/show', {
           params: {
             id: this.id
           }
         }).then(data => {
-          this.bangumi = data
           this.form = data
           this.loading = false
         })
@@ -156,11 +154,6 @@
       getBangumis () {
         this.$http.get('/bangumi/list').then((data) => {
           this.bangumis = data
-        })
-      },
-      getTags() {
-        this.$http.get('/bangumi/tags').then((data) => {
-          this.tags = data
         })
       },
       getUptoken() {
@@ -182,7 +175,7 @@
           this.$message.info('上传中，请稍候...');
         }
 
-        this.uploadHeaders.key = `bangumi/avatar/${new Date().getTime()}/${file.name}`;
+        this.uploadHeaders.key = `bangumi/role/${new Date().getTime()}-${Math.random().toString(36).substring(3, 6)}.${file.type.split('/').pop()}`;
         return isFormat && isLt2M;
       },
       handleAvatarSuccess(res, file) {
@@ -192,7 +185,7 @@
       submitForm() {
         this.$refs.form.validate((valid) => {
           if (valid) {
-            const api = this.id ? '/bangumi/edit' : '/cartoonRole/create'
+            const api = this.id ? '/cartoonRole/edit' : '/cartoonRole/create'
             this.$http.post(api, this.form).then(() => {
               this.$message.success('操作成功');
               if (!this.id) {

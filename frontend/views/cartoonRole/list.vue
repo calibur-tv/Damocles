@@ -14,13 +14,13 @@
       <el-table-column
         label="名称">
         <template slot-scope="scope">
-          <a :href="$href(`video/${scope.row.id}`)" target="_blank">{{ scope.row.name }}</a>
+          <a :href="$href(`bangumi/${scope.row.bangumi_id}/role/${scope.row.id}`)" target="_blank">{{ scope.row.name }}</a>
         </template>
       </el-table-column>
       <el-table-column
         label="所属番剧">
         <template slot-scope="scope">
-          <a :href="$href(`bangumi/${scope.row.bangumi_id}`)" target="_blank">{{ scope.row.bname }}</a>
+          <a :href="$href(`bangumi/${scope.row.bangumi_id}`)" target="_blank">{{ computeBangumi(scope.row.bangumi_id) }}</a>
         </template>
       </el-table-column>
       <el-table-column
@@ -38,6 +38,11 @@
       <el-table-column
         width="200"
         label="操作">
+        <template slot-scope="scope">
+          <router-link :to="`/cartoonRole/edit/${scope.row.id}`">
+            <el-button size="small" type="primary">编辑</el-button>
+          </router-link>
+        </template>
       </el-table-column>
     </el-table>
     <footer>
@@ -92,6 +97,15 @@
       },
       handleCurrentChange(val) {
         this.pagination.curPage = val
+      },
+      computeBangumi (bangumiId) {
+        let result = '未知番剧'
+        this.bangumis.forEach(item => {
+          if (item.id === bangumiId) {
+            result = item.name
+          }
+        })
+        return result
       }
     }
   }

@@ -121,10 +121,12 @@ Route::group(['middleware' => ['auth']], function ()
 
     Route::group(['prefix' => 'cartoonRole'], function ()
     {
+        Route::get('/show', 'CartoonRoleController@show');
+
         Route::get('/list', 'CartoonRoleController@list');
 
         Route::post('/create', 'CartoonRoleController@create');
 
-        Route::post('/edit', 'CartoonRoleController@editVideos');
+        Route::post('/edit', 'CartoonRoleController@edit');
     });
 });

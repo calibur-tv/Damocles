@@ -17,4 +17,8 @@ class CartoonRole extends Model
         'star_count',
         'fans_count'
     ];
+
+    protected $casts = [
+        'bangumi_id' => 'integer',
+    ];
 }
