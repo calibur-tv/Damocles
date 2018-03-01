@@ -120,7 +120,7 @@ class BangumiController extends Controller
             $rollback = true;
         }
 
-        $bangumi = Bangumi::where('id', $bangumi_id)->first();
+        $bangumi = Bangumi::withTrashed()->where('id', $bangumi_id)->first();
         $arr = [
             'name' => $request->get('name'),
             'avatar' => $request->get('avatar'),

@@ -318,13 +318,13 @@
         }
         let goOut = false;
         titles.forEach(title => {
-          if (!title || title.length > 20) {
+          if (!title || title.length > 30) {
             goOut = true;
           }
           result.push(title.trim())
         });
         if (goOut) {
-          this.$message.error('每一个标题都不能为空，且不能超过20字');
+          this.$message.error('每一个标题都不能为空，且不能超过30字');
           return;
         }
         this.form.titles = result
