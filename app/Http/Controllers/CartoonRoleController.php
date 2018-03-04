@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Bangumi;
 use App\Models\CartoonRole;
+use App\Models\MixinSearch;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 
 class CartoonRoleController extends Controller
 {
@@ -34,6 +36,9 @@ class CartoonRoleController extends Controller
             'created_at' => $now,
             'updated_at' => $now
         ]);
+
+        Redis::DEL('cartoon_role_trending_ids');
+        Redis::DEL('bangumi_'.$request->get('bangumi_id').'_cartoon_role_ids');
 
         return $id;
     }
