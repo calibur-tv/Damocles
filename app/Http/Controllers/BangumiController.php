@@ -9,6 +9,7 @@ use App\Models\Video;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class BangumiController extends Controller
 {
@@ -162,6 +163,9 @@ class BangumiController extends Controller
                     'content' => $request->get('alias')
                 ]);
             }
+
+            Redis::DEL('bangumi_'.$bangumi_id);
+            Redis::DEL('bangumi_'.$bangumi_id.'_videos');
         }
     }
 
