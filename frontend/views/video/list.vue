@@ -1,3 +1,37 @@
+<style lang="scss">
+  .video-column {
+    ul, li {
+      list-style-type: none;
+    }
+
+    .table-item {
+      display: inline-block;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+    }
+
+    .name {
+      width: 25%;
+      min-width: 150px
+    }
+
+    .part {
+      width: 10%;
+      min-width: 80px;
+    }
+
+    .play_count {
+      width: 20%;
+      min-width: 120px;
+    }
+
+    .console {
+      width: 40%;
+    }
+  }
+</style>
+
 <template>
   <section>
     <header>
@@ -6,55 +40,57 @@
       </router-link>
     </header>
     <el-table
-      :data="filter"
+      :data="transformerFilter"
       class="main-view"
       v-loading="loading"
       border
-      highlight-current-row>
-      <el-table-column
-        label="番名">
-        <template slot-scope="scope">
-          <a :href="$href(`bangumi/${scope.row.bangumi_id}`)" target="_blank">{{ scope.row.bname }}</a>
+      highlight-current-row
+    >
+      <el-table-column class="video-column" type="expand">
+        <template slot-scope="props">
+          <div class="video-column">
+            <div class="header">
+              <span class="table-item name">名称</span>
+              <span class="table-item part">集数</span>
+              <span class="table-item play_count">播放量</span>
+              <span class="table-item console">操作</span>
+            </div>
+            <ul>
+              <li v-for="item in props.row.value">
+              <span class="table-item name">
+                <a :href="$href(`video/${item.id}`)" target="_blank">{{ item.name }}</a>
+              </span>
+                <span class="table-item part" v-text="item.part"></span>
+                <span class="table-item play_count" v-text="item.count_played"></span>
+                <span class="table-item console">
+                <el-button
+                  size="small"
+                  type="primary"
+                  icon="edit"
+                  @click="handleEditOpen(item)"
+                >编辑</el-button>
+                <el-button
+                  size="small"
+                  icon="delete"
+                  :type="item.deleted_at ? 'warning' : 'danger'"
+                  @click="handleDelete(item)"
+                >{{ item.deleted_at ? '恢复' : '删除' }}</el-button>
+              </span>
+              </li>
+            </ul>
+          </div>
         </template>
       </el-table-column>
       <el-table-column
-        label="名称">
+        label="番剧名称"
+      >
         <template slot-scope="scope">
-          <a :href="$href(`video/${scope.row.id}`)" target="_blank">{{ scope.row.name }}</a>
+          <a :href="$href(`bangumi/${scope.row.id}`)" target="_blank">{{ scope.row.name }}</a>
         </template>
       </el-table-column>
       <el-table-column
-        prop="part"
-        width="100"
-        label="集数">
-      </el-table-column>
-      <el-table-column
-        sortable
-        width="110"
-        prop="count_played"
-        label="播放量">
-      </el-table-column>
-      <el-table-column
-        sortable
-        width="110"
-        prop="count_comment"
-        label="评论数">
-      </el-table-column>
-      <el-table-column
-        width="200"
-        label="操作">
-        <template slot-scope="scope">
-          <el-button
-            size="small"
-            type="primary"
-            icon="edit"
-            @click="handleEditOpen(scope.$index, scope.row)">编辑</el-button>
-          <el-button
-            size="small"
-            icon="delete"
-            :type="scope.row.deleted_at ? 'warning' : 'danger'"
-            @click="handleDelete(scope.$index, scope.row)">{{ scope.row.deleted_at ? '恢复' : '删除' }}</el-button>
-        </template>
+        label="集数"
+        prop="count">
       </el-table-column>
     </el-table>
     <v-modal class="video-editor-modal"
@@ -132,7 +168,7 @@
         :page-sizes="[24, 50, 100]"
         :page-size="pagination.pageSize"
         :pageCount="pagination.totalPage"
-        :total="list.length"
+        :total="transformList.length"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       ></el-pagination>
@@ -159,9 +195,15 @@
   };
   export default {
     computed: {
-      filter () {
+      transformList () {
+        return _(this.list)
+          .groupBy(x => x.bangumi_id)
+          .map((value, key) => ({ id: key, value, name: value[0].bname, count: value.length }))
+          .value();
+      },
+      transformerFilter () {
         const begin = (this.pagination.curPage - 1) * this.pagination.pageSize;
-        return this.list.slice(begin, begin + this.pagination.pageSize)
+        return this.transformList.slice(begin, begin + this.pagination.pageSize)
       }
     },
     data () {
@@ -177,7 +219,6 @@
         showEditorModal: false,
         showCreateModal: false,
         dialogTitle: '',
-        editIndex: 0,
         editForm: {
           id: '',
           bangumi_id: '',
@@ -209,9 +250,27 @@
       handleCurrentChange(val) {
         this.pagination.curPage = val
       },
-      handleEditOpen(index, row) {
+      handleDelete(row) {
+        const isDeleted = row.deleted_at !== null;
+        this.$confirm(`确定要${isDeleted ? '恢复' : '删除'}《${row.name}》吗?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http.post('/video/delete', {
+            id: row.id,
+            isDeleted: isDeleted
+          }).then(() => {
+            row.deleted_at = isDeleted ? null : moment().format('YYYY-MM-DD H:m:s');
+            this.$message.success('操作成功');
+          }, (err) => {
+            this.$message.error('操作失败');
+            console.log(err);
+          });
+        })
+      },
+      handleEditOpen(row) {
         this.dialogTitle = row.name;
-        this.editIndex = index + ((this.pagination.curPage - 1) * this.pagination.pageSize)
 
         Object.keys(row).forEach(key => {
           this.editForm[key] = row[key]
@@ -230,33 +289,11 @@
       },
       handleEditDone() {
         this.$http.post('/video/edit', this.editForm).then(() => {
-          Object.keys(this.editForm).forEach(key => {
-            this.list[this.editIndex][key] = this.editForm[key]
-          })
           this.showEditorModal = false;
-          this.$message.success('操作成功');
+          this.$message.success('操作成功，页面刷新后可看到改动');
         }, () => {
           this.$message.error('操作失败');
         });
-      },
-      handleDelete(index, row) {
-        const isDeleted = row.deleted_at !== null;
-        this.$confirm(`确定要${isDeleted ? '恢复' : '删除'}《${row.name}》吗?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$http.post('/video/delete', {
-            id: row.id,
-            isDeleted: isDeleted
-          }).then(() => {
-            this.list[index].deleted_at = isDeleted ? null : moment().format('YYYY-MM-DD H:m:s');
-            this.$message.success('操作成功');
-          }, (err) => {
-            this.$message.error('操作失败');
-            console.log(err);
-          });
-        })
       }
     }
   }
