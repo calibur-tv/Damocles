@@ -101,11 +101,12 @@
         <el-row>
           <el-col :span="9">
             <el-form-item label="番剧" :label-width="'85px'">
-              <el-select v-model="editForm.bname" placeholder="请选择">
+              <el-select v-model="editForm.bangumi_id" placeholder="请选择">
                 <el-option
                   v-for="item in bangumis"
                   :key="item.id"
-                  :value="item.name"
+                  :value="item.id"
+                  :label="item.name"
                   :disabled="!!item.deleted_at">
                 </el-option>
               </el-select>

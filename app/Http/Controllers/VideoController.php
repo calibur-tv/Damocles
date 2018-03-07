@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Video;
 use App\Models\Bangumi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 
 class VideoController extends Controller
 {
     public function edit(Request $request)
     {
-        Video::where('id', $request->get('id'))
+        Video::withTrashed()->where('id', $request->get('id'))
             ->update([
                 'name' => $request->get('name'),
                 'bangumi_id' => $request->get('bangumi_id'),
@@ -19,6 +20,9 @@ class VideoController extends Controller
                 'url' => $request->get('url') ? $request->get('url') : '',
                 'resource' => json_encode($request->get('resource'))
             ]);
+
+        Redis::DEL('video_' . $request->get('id'));
+        Redis::DEL('bangumi_' . $request->get('bangumi_id') . '_videos');
     }
 
     public function delete(Request $request)
@@ -44,32 +48,6 @@ class VideoController extends Controller
             'videos' => $videos,
             'bangumis' => Bangumi::withTrashed()->select('id', 'name', 'deleted_at')->get()
         ];
-    }
-
-    public function upload(Request $request)
-    {
-        $bangumiId = $request->get('bangumiId');
-        $part = $request->get('part');
-        $url = $request->get('url') || '';
-        $id = Video::whereRaw('bangumi_id = ? and part = ?', [$bangumiId, $part])->select('id')->first();
-        if (is_null($id)) {
-            Video::create([
-                'bangumi_id' => $bangumiId,
-                'part' => $part,
-                'name' => $request->get('name'),
-                'url' => $url,
-                'resource' => json_encode($request->get('resource')),
-                'poster' => $request->get('poster'),
-                'deleted_at' => $request->get('deleted_at')
-            ]);
-        } else {
-            Video::where('id', $id)->update([
-                'name' => $request->get('name'),
-                'url' => $url,
-                'resource' => json_encode($request->get('resource')),
-                'poster' => $request->get('poster')
-            ]);
-        }
     }
 
     public function saveVideos(Request $request)
