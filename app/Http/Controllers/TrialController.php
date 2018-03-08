@@ -85,11 +85,10 @@ class TrialController extends Controller
 
     public function passPost(Request $request)
     {
-        $id = $request->get('id');
-        $post = Post::where('id', $id)->first();
-
-        $post->state = 7;
-        $post->save();
+        Post::where('id', $request->get('id'))
+            ->update([
+                'state' => 7
+            ]);
     }
 
     public function deletePostImage(Request $request)
