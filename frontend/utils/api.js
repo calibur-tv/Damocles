@@ -5,7 +5,7 @@ const http = axios.create({
     'Accept': 'application/json',
     'X-CSRF-TOKEN': document.getElementById('_csrf') && document.getElementById('_csrf').getAttribute('content')
   },
-  timeout: 10000
+  timeout: 60000
 })
 
 http.interceptors.request.use((config) => {
