@@ -178,22 +178,6 @@
 </template>
 
 <script>
-  const defaultResource = {
-    "video": {
-      "720": {
-        "useLyc": false,
-        "src": ""
-      },
-      "1080": {
-        "useLyc": false,
-        "src": ""
-      }
-    },
-    "lyric": {
-      "zh": "",
-      "en": ""
-    }
-  };
   export default {
     computed: {
       transformList () {
@@ -228,7 +212,22 @@
           part: '',
           poster: '',
           url: '',
-          resource: defaultResource
+          resource: {
+            "video": {
+              "720": {
+                "useLyc": false,
+                "src": ""
+              },
+              "1080": {
+                "useLyc": false,
+                "src": ""
+              }
+            },
+            "lyric": {
+              "zh": "",
+              "en": ""
+            }
+          }
         },
         CDNPrefix: 'https://image.calibur.tv/'
       }
@@ -276,7 +275,23 @@
         Object.keys(row).forEach(key => {
           this.editForm[key] = row[key]
         })
-        this.editForm.resource = row.resource ? this.$deepAssign(defaultResource, row.resource) : defaultResource
+        const defResource = {
+          "video": {
+            "720": {
+              "useLyc": false,
+              "src": ""
+            },
+            "1080": {
+              "useLyc": false,
+              "src": ""
+            }
+          },
+          "lyric": {
+            "zh": "",
+            "en": ""
+          }
+        }
+        this.editForm.resource = row.resource ? this.$deepAssign({}, defResource, row.resource) : Object.assign({}, defResource)
 
         this.showEditorModal = true;
       },
@@ -289,7 +304,9 @@
         return 0;
       },
       handleEditDone() {
-        this.$http.post('/video/edit', this.editForm).then(() => {
+        this.$http.post('/video/edit', Object.assign(this.editForm, {
+          url: this.editForm.split('?').shift()
+        })).then(() => {
           this.showEditorModal = false;
           this.$message.success('操作成功，页面刷新后可看到改动');
         }, () => {

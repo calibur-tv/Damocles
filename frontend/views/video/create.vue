@@ -360,7 +360,7 @@
           if (video && !(video.startsWith('http://') || video.startsWith('https://'))) {
             goOut = true;
           }
-          result.push(video.trim());
+          result.push(video.trim().split('?').shift());
         })
         if (goOut) {
           this.$message.error('存在不合法的链接');
