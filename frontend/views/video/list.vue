@@ -305,7 +305,7 @@
       },
       handleEditDone() {
         this.$http.post('/video/edit', Object.assign(this.editForm, {
-          url: this.editForm.split('?').shift()
+          url: this.editForm.url.split('?').shift()
         })).then(() => {
           this.showEditorModal = false;
           this.$message.success('操作成功，页面刷新后可看到改动');
