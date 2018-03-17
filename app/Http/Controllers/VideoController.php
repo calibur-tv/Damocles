@@ -32,11 +32,19 @@ class VideoController extends Controller
         $request->get('isDeleted') ? $video->restore() : $video->delete();
     }
 
-    public function list()
+    public function list(Request $request)
     {
+        $page = $request->get('page') ?: 0;
+        $ids = Video::withTrashed()
+            ->groupBy('bangumi_id')
+            ->skip($page * 10)
+            ->take(10)
+            ->pluck('bangumi_id');
+
         $videos = Video::withTrashed()
             ->join('bangumis', 'videos.bangumi_id', '=', 'bangumis.id')
             ->select('videos.*', 'bangumis.name AS bname')
+            ->whereIn('bangumi_id', $ids)
             ->get();
 
         foreach ($videos as $row)
@@ -44,9 +52,14 @@ class VideoController extends Controller
             $row['resource'] = $row['resource'] === 'null' ? '' : json_decode($row['resource']);
         }
 
+        if ($page) {
+            return $videos;
+        }
+
         return [
             'videos' => $videos,
-            'bangumis' => Bangumi::withTrashed()->select('id', 'name', 'deleted_at')->get()
+            'bangumis' => Bangumi::withTrashed()->select('id', 'name', 'deleted_at')->get(),
+            'total' => Video::withTrashed()->groupBy('bangumi_id')->count()
         ];
     }
 
