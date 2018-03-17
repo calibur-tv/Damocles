@@ -25,9 +25,12 @@
                     prop="bangumiId"
                     :rules="[{ type: 'number', required: true, message: '请选择视频所属番剧', trigger: 'change' }]">
         <el-col :span="20">
-          <el-select v-model="form.bangumiId"
-                     :disabled="saver.bangumi"
-                     placeholder="请选择">
+          <el-select
+            v-model="form.bangumiId"
+            :disabled="saver.bangumi"
+            placeholder="请选择"
+            filterable
+          >
             <el-option
               v-for="item in bangumis"
               :key="item.id"
