@@ -20,7 +20,12 @@
         ></el-input>
       </el-form-item>
       <el-form-item label="所属番剧" prop="bangumi_id">
-        <el-select v-model="form.bangumi_id" placeholder="请选择" required>
+        <el-select
+          v-model="form.bangumi_id"
+          placeholder="请选择"
+          required
+          filterable
+        >
           <el-option
             v-for="item in bangumis"
             :key="item.id"

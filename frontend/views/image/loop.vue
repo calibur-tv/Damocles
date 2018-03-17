@@ -103,12 +103,17 @@
             </a>
           </el-col>
         </el-form-item>
-        <el-form-item label="番剧"
-                      prop="bangumi_id"
-                      :rules="[
+        <el-form-item
+          label="番剧"
+          prop="bangumi_id"
+          :rules="[
             { type: 'number', required: true, message: '番剧不能为空', trigger: 'change' }
           ]">
-          <el-select v-model="createForm.bangumi_id" placeholder="请选择">
+          <el-select
+            v-model="createForm.bangumi_id"
+            placeholder="请选择"
+            filterable
+          >
             <el-option
               v-for="item in bangumis"
               :key="item.id"
