@@ -168,13 +168,11 @@
     </v-modal>
     <footer>
       <el-pagination
-        layout="total, sizes, prev, pager, next, jumper"
+        layout="total, prev, next"
         :current-page="pagination.curPage"
-        :page-sizes="[24, 50, 100]"
         :page-size="pagination.pageSize"
         :pageCount="pagination.totalPage"
-        :total="transformList.length"
-        @size-change="handleSizeChange"
+        :total="pagination.total"
         @current-change="handleCurrentChange"
       ></el-pagination>
     </footer>
@@ -202,8 +200,10 @@
         bangumis: [],
         pagination: {
           totalPage: 0,
-          pageSize: 24,
-          curPage: 1
+          pageSize: 10,
+          curPage: 1,
+          total: 0,
+          maxPage: 0
         },
         showEditorModal: false,
         showCreateModal: false,
@@ -244,15 +244,33 @@
         this.$http.get('/bangumi/videos').then((data) => {
           this.list = data.videos
           this.bangumis = data.bangumis
-          this.pagination.totalPage =  Math.ceil(this.list.length / this.pagination.pageSize)
+          this.pagination.total = data.total
+          this.pagination.totalPage =  Math.ceil(data.total / this.pagination.pageSize)
           this.loading = false
         })
       },
-      handleSizeChange(val) {
-        this.pagination.pageSize = val
-      },
       handleCurrentChange(val) {
-        this.pagination.curPage = val
+        if (val <= this.pagination.maxPage) {
+          this.pagination.curPage = val
+          return
+        }
+        if (val > this.pagination.maxPage) {
+          this.loading = true
+          this.$http.get('/bangumi/videos', {
+            params: {
+              page: val - 1
+            }
+          }).then((data) => {
+            this.list = this.list.concat(data)
+            this.pagination.curPage = val
+            this.pagination.maxPage = val
+            this.loading = false
+          }).catch(() => {
+            this.pagination.curPage = val
+            this.pagination.maxPage = val
+            this.loading = false
+          })
+        }
       },
       handleDelete(row) {
         const isDeleted = row.deleted_at !== null;
