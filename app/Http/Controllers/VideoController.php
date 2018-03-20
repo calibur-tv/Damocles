@@ -86,7 +86,9 @@ class VideoController extends Controller
                     'resource' => $video['resource'] ? json_encode($video['resource']) : '',
                     'poster' => $video['poster']
                 ]);
+                Redis::DEL('video_' . $id);
             }
+            Redis::DEL('bangumi_'.$video['bangumiId'].'_videos');
         }
     }
 }
