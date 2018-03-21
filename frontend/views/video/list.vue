@@ -168,7 +168,8 @@
     </v-modal>
     <footer>
       <el-pagination
-        layout="total, prev, next"
+        background
+        layout="total, prev, pager, next"
         :current-page="pagination.curPage"
         :page-size="pagination.pageSize"
         :pageCount="pagination.totalPage"
@@ -203,7 +204,7 @@
           pageSize: 10,
           curPage: 1,
           total: 0,
-          maxPage: 0
+          maxPage: 1
         },
         showEditorModal: false,
         showCreateModal: false,
@@ -256,12 +257,11 @@
         }
         if (val > this.pagination.maxPage) {
           this.loading = true
-          this.$http.get('/bangumi/videos', {
-            params: {
-              page: val - 1
-            }
+          this.$http.post('/bangumi/videos', {
+            seenIds: this.transformList.map(_ => parseInt(_.id, 10)),
+            take: this.pagination.pageSize * (val - this.pagination.maxPage)
           }).then((data) => {
-            this.list = this.list.concat(data)
+            this.list = this.list.concat(data.video)
             this.pagination.curPage = val
             this.pagination.maxPage = val
             this.loading = false

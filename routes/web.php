@@ -31,6 +31,8 @@ Route::group(['middleware' => ['auth']], function ()
 
         Route::get('/videos', 'VideoController@list');
 
+        Route::post('/videos', 'VideoController@pageList');
+
         Route::post('/create', 'BangumiController@create');
 
         Route::post('/release', 'BangumiController@release');
