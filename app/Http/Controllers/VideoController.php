@@ -84,11 +84,7 @@ class VideoController extends Controller
             $row['resource'] = $row['resource'] === 'null' ? '' : json_decode($row['resource']);
         }
 
-        return [
-            'video' => $videos,
-            'temp' => $temp,
-            'filter' => $ids
-        ];
+        return $videos;
     }
 
     public function saveVideos(Request $request)
