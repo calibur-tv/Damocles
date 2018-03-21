@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Video;
 use App\Models\Bangumi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
 class VideoController extends Controller
@@ -34,10 +35,8 @@ class VideoController extends Controller
 
     public function list(Request $request)
     {
-        $page = $request->get('page') ?: 0;
         $ids = Video::withTrashed()
             ->groupBy('bangumi_id')
-            ->skip($page * 10)
             ->take(10)
             ->pluck('bangumi_id');
 
@@ -52,14 +51,43 @@ class VideoController extends Controller
             $row['resource'] = $row['resource'] === 'null' ? '' : json_decode($row['resource']);
         }
 
-        if ($page) {
-            return $videos;
-        }
-
         return [
             'videos' => $videos,
             'bangumis' => Bangumi::withTrashed()->select('id', 'name', 'deleted_at')->get(),
-            'total' => Video::withTrashed()->groupBy('bangumi_id')->count()
+            'total' => (int)DB::table('videos')
+                ->select(DB::raw('count(distinct(`bangumi_id`)) AS count'))
+                ->pluck('count')
+                ->first()
+        ];
+    }
+
+    public function pageList(Request $request)
+    {
+        $seenIds = $request->get('seenIds');
+        $take = $request->get('take');
+
+        $temp = Video::withTrashed()
+            ->groupBy('bangumi_id')
+            ->pluck('bangumi_id')
+            ->toArray();
+
+        $ids = array_slice(array_diff($temp, $seenIds), 0, $take);
+
+        $videos = Video::withTrashed()
+            ->join('bangumis', 'videos.bangumi_id', '=', 'bangumis.id')
+            ->select('videos.*', 'bangumis.name AS bname')
+            ->whereIn('bangumi_id', $ids)
+            ->get();
+
+        foreach ($videos as $row)
+        {
+            $row['resource'] = $row['resource'] === 'null' ? '' : json_decode($row['resource']);
+        }
+
+        return [
+            'video' => $videos,
+            'temp' => $temp,
+            'filter' => $ids
         ];
     }
 
