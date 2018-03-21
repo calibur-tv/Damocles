@@ -261,7 +261,7 @@
             seenIds: this.transformList.map(_ => parseInt(_.id, 10)),
             take: this.pagination.pageSize * (val - this.pagination.maxPage)
           }).then((data) => {
-            this.list = this.list.concat(data.video)
+            this.list = this.list.concat(data)
             this.pagination.curPage = val
             this.pagination.maxPage = val
             this.loading = false
