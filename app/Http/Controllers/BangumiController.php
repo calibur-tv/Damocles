@@ -78,6 +78,7 @@ class BangumiController extends Controller
             ]);
         }
 
+        Redis::DEL('bangumi_release_list');
         return response('success');
     }
 
