@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\PostImages;
 use App\Models\User;
+use App\Http\Services\Trial\WordsFilter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
@@ -36,8 +37,18 @@ class TrialController extends Controller
     public function posts()
     {
         $list = Post::whereIn('state', [4, 4])->get();
+        if (empty($list))
+        {
+            return [];
+        }
+
+        $filter = new WordsFilter();
+
         foreach ($list as $i =>$row)
         {
+            $list[$i]['f_title'] = $filter->filter($row['title']);
+            $list[$i]['f_content'] = $filter->filter($row['content']);
+            $list[$i]['words'] = $filter->filter($row['title'] . $row['content']);
             $list[$i]['images'] = PostImages::where('post_id', $row['id'])->get();
             $list[$i]['user'] = User::where('id', $row['user_id'])->first();
         }
