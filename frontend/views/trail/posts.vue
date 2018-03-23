@@ -1,47 +1,109 @@
-<style lang="scss" scoped="">
+<style lang="scss">
+  #trial-post-table {
 
+    li {
+      list-style-type: none;
+
+      .header {
+        background-color: #f5f7fa;
+        height: 70px;
+        line-height: 70px;
+        padding-left: 20px;
+
+        .user {
+          float: left;
+          display: block;
+          margin-right: 5px;
+
+          img {
+            border-radius: 50%;
+            display: inline-block;
+            vertical-align: middle;
+            border: 1px solid #fafafa;
+          }
+        }
+
+        .title {
+          overflow: hidden;
+        }
+      }
+
+      .body {
+        padding: 15px;
+        border-left: 1px solid #ebebeb;
+        border-right: 1px solid #ebebeb;
+
+        .text {
+          min-height: 100px;
+          font-size: 15px;
+          color: #333;
+          line-height: 1.5em;
+        }
+
+        .images {
+          border-top: 1px solid #ebebeb;
+          padding-top: 20px;
+          margin-top: 20px;
+
+          img {
+            display: inline-block;
+            cursor: pointer;
+          }
+        }
+
+        .tags {
+          border-top: 1px solid #ebebeb;
+          padding-top: 20px;
+          margin-top: 20px;
+
+          .el-tag {
+            margin-bottom: 3px;
+          }
+        }
+      }
+
+      .footer {
+        padding: 15px;
+        border: 1px solid #ebebeb;
+        text-align: right;
+      }
+    }
+  }
 </style>
 
 <template>
   <section>
-    <header></header>
-    <el-table
-      :data="list"
-      class="main-view"
-      v-loading="loading"
-      border>
-      <el-table-column label="用户">
-        <template slot-scope="scope">
-          <a :href="$href(`user/${scope.row.user.zone}`)" target="_blank">
-            <span>{{ scope.row.user.nickname }}</span>
+    <ul id="trial-post-table" class="main-view" v-loading="loading">
+      <li v-for="(item, index) in list" :key="item.id">
+        <div class="header">
+          <a :href="$href(`user/${item.user.zone}`)" class="user">
+            <img :src="$resize(item.user.avatar, { width: 50 })" alt="">
+            <span class="nickname" v-text="item.user.nickname"></span>：
           </a>
-        </template>
-      </el-table-column>
-      <el-table-column label="标题">
-        <template slot-scope="scope">
-          <a :href="$href(`post/${scope.row.id}`)" target="_blank">
-            <span>{{ scope.row.title }}</span>
+          <a :href="$href(`post/${item.id}`)">
+            <h4 class="title" v-html="item.f_title.text || item.title"></h4>
           </a>
-        </template>
-      </el-table-column>
-      <el-table-column label="内容">
-        <template slot-scope="scope">
-          <div v-html="scope.row.content"></div>
-        </template>
-      </el-table-column>
-      <el-table-column label="图片">
-        <template slot-scope="scope">
-          <img v-for="(item, index) in scope.row.images"  @click="deleteImage(item.id, item.src, scope.$index, index)" :src="$resize(item.src, { width: 150 })" alt="">
-        </template>
-      </el-table-column>
-      <el-table-column width="240" label="操作">
-        <template slot-scope="scope">
-          <el-button size="small" type="default" icon="edit" @click="passPost(scope.$index, scope.row.id)">通过</el-button>
-          <el-button size="small" type="primary" icon="edit" @click="delPost(scope.$index, scope.row.id)">删帖</el-button>
-          <el-button size="small" type="danger" icon="edit" @click="delUser(scope.$index, scope.row.user.id)">删人</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+        </div>
+        <div class="body">
+          <div class="text" v-html="item.f_content.text || item.content"></div>
+          <div class="images" v-if="item.images.length">
+            <img
+              v-for="(item, subIndex) in item.images"
+              @click="deleteImage(item.id, item.src, index, subIndex)"
+              :src="$resize(item.src, { width: 150 })"
+            >
+          </div>
+          <div class="tags" v-if="item.words.filters.length">
+            <el-tag type="info" v-for="tag in item.words.filters" v-text="tag"></el-tag>
+          </div>
+        </div>
+        <div class="footer">
+          <el-button size="small" type="default" icon="edit" @click="passPost(index, item.id)">通过</el-button>
+          <el-button size="small" type="primary" icon="edit" @click="delPost(index, item.id)">删帖</el-button>
+          <el-button size="small" type="danger" icon="edit" @click="delUser(index, item.user.id)">删人</el-button>
+        </div>
+      </li>
+    </ul>
   </section>
 </template>
 
