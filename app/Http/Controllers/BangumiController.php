@@ -79,6 +79,7 @@ class BangumiController extends Controller
         }
 
         Redis::DEL('bangumi_release_list');
+        Redis::DEL('bangumi_' . $bangumi_id);
         return response('success');
     }
 
