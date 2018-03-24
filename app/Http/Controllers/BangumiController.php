@@ -15,13 +15,14 @@ class BangumiController extends Controller
 {
     public function create(Request $request)
     {
+        $releasedId = $request->get('released_video_id') ?: 0;
         $bangumi_id = Bangumi::insertGetId([
             'name' => $request->get('name'),
             'avatar' => $request->get('avatar'),
             'banner' => $request->get('banner'),
             'summary' => $request->get('summary'),
             'released_at' => $request->get('released_at'),
-            'released_video_id' => $request->get('released_video_id') ?: 0,
+            'released_video_id' => $releasedId,
             'season' => $request->get('season') ? $request->get('season') : 'null',
             'alias' => $request->get('alias') ? json_encode([
                 'search' => $request->get('alias')
@@ -49,6 +50,11 @@ class BangumiController extends Controller
             ]);
         }
         DB::table('bangumi_tag')->insert($tags);
+
+        if ($releasedId)
+        {
+            Redis::DEL('bangumi_release_list');
+        }
     }
 
     public function release(Request $request)
