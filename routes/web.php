@@ -92,6 +92,8 @@ Route::group(['middleware' => ['auth']], function ()
             Route::post('/delete', 'TrialController@deleteWords');
 
             Route::post('/add', 'TrialController@addWords');
+
+            Route::post('/mutiDelete', 'TrialController@mutiDelete');
         });
 
         Route::group(['prefix' => 'users'], function ()

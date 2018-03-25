@@ -5,7 +5,8 @@
 <template>
   <section>
     <header>
-      <el-button type="primary" icon="plus" size="large" @click="showCreateModal = true">添加高危词</el-button>
+      <el-button type="primary" icon="plus" size="large" @click="showEditModal = true; isDelete = false">添加高危词</el-button>
+      <el-button type="primary" icon="plus" size="large" @click="showEditModal = true; isDelete = true">删除高危词</el-button>
     </header>
     <el-table
       :data="filter"
@@ -35,8 +36,8 @@
       ></el-pagination>
     </footer>
     <v-modal
-      v-model="showCreateModal"
-      header-text="添加高危词"
+      v-model="showEditModal"
+      :header-text="isDelete ? '删除高危词' : '添加高危词'"
       @submit="addWords">
       <el-input
         type="textarea"
@@ -60,13 +61,14 @@
       return {
         list: [],
         loading: true,
-        showCreateModal: false,
+        showEditModal: false,
         words: '',
         pagination: {
           totalPage: 0,
           pageSize: 1000,
           curPage: 1
         },
+        isDelete: false
       }
     },
     created () {
@@ -92,11 +94,15 @@
             arr.push(item)
           }
         })
-        this.$http.post('trial/blackwords/add', {
+        this.$http.post(this.isDelete ? 'trial/blackwords/mutiDelete' : 'trial/blackwords/add', {
           words: arr
         }).then(() => {
-          this.list.concat(arr)
-          this.showCreateModal = false;
+          if (this.isDelete) {
+            this.$message.success('操作成功')
+          } else {
+            this.list.concat(arr)
+          }
+          this.showEditModal = false;
         }).catch(() => {
           this.$message.error('操作错误，请联系管理员')
         });

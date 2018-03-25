@@ -21,6 +21,15 @@ class TrialController extends Controller
         Redis::LREM('blackwords', 1, $request->get('words'));
     }
 
+    public function mutiDelete(Request $request)
+    {
+        $words = $request->get('words');
+        foreach ($words as $item)
+        {
+            Redis::LREM('blackwords', 1, $item);
+        }
+    }
+
     public function addWords(Request $request)
     {
         Redis::LPUSH('blackwords', $request->get('words'));
