@@ -58,7 +58,7 @@
         :current-page="pagination.curPage"
         :page-size="pagination.pageSize"
         :pageCount="pagination.totalPage"
-        :total="list.length"
+        :total="pagination.total"
         @current-change="handleCurrentChange"
       ></el-pagination>
     </footer>
@@ -93,10 +93,14 @@
     methods: {
       getUserList () {
         this.$http.get('/user/list', {
-          take: this.pagination.pageSize
+          params: {
+            take: this.pagination.pageSize
+          }
         }).then((data) => {
-          this.list = data
+          this.list = data.list
           this.loading = false
+          this.pagination.total = data.total
+          this.pagination.totalPage =  Math.ceil(data.total / this.pagination.pageSize)
         })
       },
       handleCurrentChange(val) {
@@ -107,10 +111,12 @@
         if (val > this.pagination.maxPage) {
           this.loading = true
           this.$http.get('/user/list', {
-            seenIds: this.list.map(_ => parseInt(_.id, 10)),
-            take: this.pagination.pageSize * (val - this.pagination.maxPage)
+            params: {
+              seenIds: this.list.map(_ => parseInt(_.id, 10)),
+              take: this.pagination.pageSize * (val - this.pagination.maxPage)
+            }
           }).then((data) => {
-            this.list = this.list.concat(data)
+            this.list = this.list.concat(data.list)
             this.pagination.curPage = val
             this.pagination.maxPage = val
             this.loading = false
