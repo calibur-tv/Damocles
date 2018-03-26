@@ -131,4 +131,17 @@ Route::group(['middleware' => ['auth']], function ()
 
         Route::post('/edit', 'CartoonRoleController@edit');
     });
+
+    Route::group(['prefix' => 'user'], function ()
+    {
+        Route::get('/list', 'UserController@list');
+
+        Route::get('/feedback', 'UserController@feedback');
+
+        Route::post('/feedback/read', 'UserController@readFeedback');
+
+        Route::post('/block', 'UserController@block');
+
+        Route::post('/recover', 'UserController@recover');
+    });
 });
