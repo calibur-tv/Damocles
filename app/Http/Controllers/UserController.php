@@ -37,7 +37,7 @@ class UserController extends Controller
 
     public function feedback()
     {
-        return Feedback::where('stage', '<>', 0)->get();
+        return Feedback::where('stage', 0)->get();
     }
 
     public function readFeedback(Request $request)
