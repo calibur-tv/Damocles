@@ -13,11 +13,16 @@ class UserController extends Controller
         $take = $request->get('take');
         $seenIds = $request->get('seenIds') ?: [];
 
-        return User::withTrashed()
+        $users = User::withTrashed()
             ->whereNotIn('id', $seenIds)
             ->orderBy('id', 'DESC')
             ->take($take)
             ->get();
+
+        return [
+            'list' => $users,
+            'total' => User::withTrashed()->count()
+        ];
     }
 
     public function block(Request $request)
