@@ -21,9 +21,11 @@
       </el-breadcrumb>
     </header>
     <el-form :model="form" ref="form" label-width="100px" class="main-view">
-      <el-form-item label="番剧"
-                    prop="bangumiId"
-                    :rules="[{ type: 'number', required: true, message: '请选择视频所属番剧', trigger: 'change' }]">
+      <el-form-item
+        label="番剧"
+        prop="bangumiId"
+        :rules="[{ type: 'number', required: true, message: '请选择视频所属番剧', trigger: 'change' }]"
+      >
         <el-col :span="20">
           <el-select
             v-model="form.bangumiId"
