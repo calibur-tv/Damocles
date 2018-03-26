@@ -67,11 +67,13 @@
         })
       },
       computeType (type) {
+        let result = ''
         this.options.forEach(item => {
           if (item.value === parseInt(type, 10)) {
-            return item.label
+            result = item.label
           }
         })
+        return result
       },
       remove (index, id) {
         this.$http.post('/user/feedback/read', {
