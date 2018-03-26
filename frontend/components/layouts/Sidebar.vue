@@ -70,6 +70,15 @@
 
     <el-submenu index="6">
       <template slot="title">
+        <i class="el-icon-bell"></i>
+        <span slot="title">用户</span>
+      </template>
+      <el-menu-item index="/user/list">用户列表</el-menu-item>
+      <el-menu-item index="/user/feedback">用户反馈</el-menu-item>
+    </el-submenu>
+
+    <el-submenu index="99">
+      <template slot="title">
         <i class="el-icon-setting"></i>
         <span slot="title">设置</span>
       </template>

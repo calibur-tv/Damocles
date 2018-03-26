@@ -266,8 +266,7 @@
             this.pagination.maxPage = val
             this.loading = false
           }).catch(() => {
-            this.pagination.curPage = val
-            this.pagination.maxPage = val
+            this.$message.error('加载失败，请重试');
             this.loading = false
           })
         }

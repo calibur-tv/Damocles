@@ -86,6 +86,16 @@ export default new Router({
       path: '/admin/user',
       name: '管理员',
       component: require('view/admin/user').default
+    },
+    {
+      path: '/user/list',
+      name: '用户列表',
+      component: require('view/user/list').default
+    },
+    {
+      path: '/user/feedback',
+      name: '用户反馈',
+      component: require('view/user/feedback').default
     }
   ]
 })
