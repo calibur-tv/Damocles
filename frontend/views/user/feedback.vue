@@ -17,11 +17,13 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="desc"
-        label="内容">
+        label="内容"
+        prop="desc">
       </el-table-column>
       <el-table-column label="操作">
-        <button @click="remove(scope.$index, scope.row.id)">确认</button>
+        <template slot-scope="scope">
+          <el-button @click="remove(scope.$index, scope.row.id)">确认</el-button>
+        </template>
       </el-table-column>
     </el-table>
   </div>
