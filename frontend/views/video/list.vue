@@ -35,10 +35,82 @@
 <template>
   <section>
     <header>
-      <router-link to="/video/create">
-        <el-button type="primary" icon="plus" size="large">新建视频</el-button>
-      </router-link>
+      <el-row>
+        <el-col :span="4">
+          <router-link to="/video/create">
+            <el-button type="primary" icon="plus" size="large">新建视频</el-button>
+          </router-link>
+        </el-col>
+        <el-col :span="8" :offset="12">
+          <el-select v-model="searchId" @change="handleSearch" filterable placeholder="搜索">
+            <el-option
+              v-for="item in bangumis"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-col>
+      </el-row>
     </header>
+    <template v-if="searchVideos.length">
+      <br/>
+      <br/>
+      <el-table
+        :data="searchVideos"
+        v-loading="searchLoading"
+        border
+        highlight-current-row
+      >
+        <el-table-column
+          label="番名">
+          <template slot-scope="scope">
+            <a :href="$href(`bangumi/${scope.row.bangumi_id}`)" target="_blank">{{ scope.row.bname }}</a>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="名称">
+          <template slot-scope="scope">
+            <a :href="$href(`video/${scope.row.id}`)" target="_blank">{{ scope.row.name }}</a>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="part"
+          width="100"
+          label="集数">
+        </el-table-column>
+        <el-table-column
+          sortable
+          width="110"
+          prop="count_played"
+          label="播放量">
+        </el-table-column>
+        <el-table-column
+          sortable
+          width="110"
+          prop="count_comment"
+          label="评论数">
+        </el-table-column>
+        <el-table-column
+          width="200"
+          label="操作">
+          <template slot-scope="scope">
+            <el-button
+              size="small"
+              type="primary"
+              icon="edit"
+              @click="handleEditOpen(scope.row)">编辑</el-button>
+            <el-button
+              size="small"
+              icon="delete"
+              :type="scope.row.deleted_at ? 'warning' : 'danger'"
+              @click="handleDelete(scope.row)">{{ scope.row.deleted_at ? '恢复' : '删除' }}</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <br/>
+      <br/>
+    </template>
     <el-table
       :data="transformerFilter"
       class="main-view"
@@ -234,7 +306,10 @@
             }
           }
         },
-        CDNPrefix: 'https://image.calibur.tv/'
+        CDNPrefix: 'https://image.calibur.tv/',
+        searchId: undefined,
+        searchVideos: [],
+        searchLoading: false
       }
     },
     created () {
@@ -333,6 +408,30 @@
         }, () => {
           this.$message.error('操作失败');
         });
+      },
+      handleSearch () {
+        let needSearch = true
+        this.list.forEach(item => {
+          if (item.bangumi_id === this.searchId) {
+            this.searchVideos.push(item)
+            needSearch = false
+          }
+        })
+        if (!needSearch) {
+          return
+        }
+        this.searchLoading = true
+        this.$http.get('/video/search', {
+          params: {
+            id: this.searchId
+          }
+        }).then((data) => {
+          this.searchVideos = data
+          this.searchLoading = false
+        }).catch(() => {
+          this.$message.error('查询失败，请重试');
+          this.searchLoading = false
+        })
       }
     }
   }

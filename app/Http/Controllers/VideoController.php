@@ -115,4 +115,13 @@ class VideoController extends Controller
             Redis::DEL('bangumi_'.$video['bangumiId'].'_videos');
         }
     }
+
+    public function search(Request $request)
+    {
+        return Video::withTrashed()
+            ->join('bangumis', 'videos.bangumi_id', '=', 'bangumis.id')
+            ->select('videos.*', 'bangumis.name AS bname')
+            ->where('bangumi_id', $request->get('id'))
+            ->get();
+    }
 }

@@ -46,6 +46,8 @@ Route::group(['middleware' => ['auth']], function ()
     {
         Route::get('/', 'PageController@video')->name('video');
 
+        Route::get('/search', 'VideoController@search');
+
         Route::post('/edit', 'VideoController@edit');
 
         Route::post('/delete', 'VideoController@delete');

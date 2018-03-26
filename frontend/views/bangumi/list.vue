@@ -1,10 +1,58 @@
 <template>
   <section>
     <header>
-      <router-link to="/bangumi/create">
-        <el-button type="primary" icon="plus" size="large">创建番剧</el-button>
-      </router-link>
+      <el-row>
+        <el-col :span="4">
+          <router-link to="/bangumi/create">
+            <el-button type="primary" icon="plus" size="large">创建番剧</el-button>
+          </router-link>
+        </el-col>
+        <el-col :span="8" :offset="12">
+          <el-select v-model="searchId" @change="handleSearch" filterable placeholder="搜索">
+            <el-option
+              v-for="item in list"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-col>
+      </el-row>
     </header>
+    <template v-if="searchBangumi.length">
+      <br/>
+      <br/>
+      <el-table
+        :data="searchBangumi"
+        border
+      >
+        <el-table-column label="番名">
+          <template slot-scope="scope">
+            <a :href="$href(`bangumi/${scope.row.id}`)" target="_blank">{{ scope.row.name }}</a>
+          </template>
+        </el-table-column>
+        <el-table-column width="300" label="操作">
+          <template slot-scope="scope">
+            <router-link :to="`/bangumi/edit/${scope.row.id}`">
+              <el-button size="small" type="primary" icon="edit">编辑</el-button>
+            </router-link>
+            <el-button size="small"
+                       icon="upload2"
+                       type="primary"
+                       @click="handleUpdate(scope.row.id)"
+                       v-if="scope.row.id !== scope.row.collection_id"
+            >更新</el-button>
+            <el-button size="small"
+                       icon="delete"
+                       :type="scope.row.deleted_at ? 'warning' : 'danger'"
+                       @click="handleDelete(scope.$index, scope.row)"
+            >{{ scope.row.deleted_at ? '恢复' : '删除' }}</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <br/>
+      <br/>
+    </template>
     <el-table
       :data="filter"
       class="main-view"
@@ -65,7 +113,9 @@
           pageSize: 50,
           curPage: 1
         },
-        loading: true
+        loading: true,
+        searchId: undefined,
+        searchBangumi: []
       }
     },
     created () {
@@ -115,11 +165,18 @@
             isDeleted: !!bangumi.deleted_at
           }).then(() => {
             this.$message.success('操作成功');
-            this.list[index + (this.pagination.curPage - 1) * this.pagination.pageSize].deleted_at = !bangumi.deleted_at
+            bangumi.deleted_at = !bangumi.deleted_at
           }).catch(() => {
             this.$message.error('操作失败');
           })
         }).catch(() => {
+        })
+      },
+      handleSearch () {
+        this.list.forEach(item => {
+          if (item.id === this.searchId) {
+            this.searchBangumi = [item]
+          }
         })
       }
     }
