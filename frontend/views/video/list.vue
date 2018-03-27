@@ -165,10 +165,12 @@
         prop="count">
       </el-table-column>
     </el-table>
-    <v-modal class="video-editor-modal"
-             v-model="showEditorModal"
-             :header-text="'视频编辑'"
-             @submit="handleEditDone">
+    <v-modal
+      class="video-editor-modal"
+      v-model="showEditorModal"
+      :header-text="'视频编辑'"
+      @submit="handleEditDone"
+    >
       <el-form :model="editForm">
         <el-row>
           <el-col :span="9">

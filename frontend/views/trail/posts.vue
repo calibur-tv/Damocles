@@ -94,7 +94,12 @@
             >
           </div>
           <div class="tags" v-if="item.words.filters.length">
-            <el-tag type="info" v-for="tag in item.words.filters" v-text="tag"></el-tag>
+            <el-tag
+              type="info"
+              v-for="tag in item.words.filters"
+              :key="tag"
+              v-text="tag"
+            ></el-tag>
           </div>
         </div>
         <div class="footer">

@@ -118,10 +118,17 @@ class VideoController extends Controller
 
     public function search(Request $request)
     {
-        return Video::withTrashed()
+        $videos = Video::withTrashed()
             ->join('bangumis', 'videos.bangumi_id', '=', 'bangumis.id')
             ->select('videos.*', 'bangumis.name AS bname')
             ->where('bangumi_id', $request->get('id'))
             ->get();
+
+        foreach ($videos as $row)
+        {
+            $row['resource'] = $row['resource'] === 'null' ? '' : json_decode($row['resource']);
+        }
+
+        return $videos;
     }
 }
