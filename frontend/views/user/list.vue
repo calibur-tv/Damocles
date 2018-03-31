@@ -42,11 +42,6 @@
         width="180">
       </el-table-column>
       <el-table-column
-        prop="phone"
-        label="手机号"
-        width="180">
-      </el-table-column>
-      <el-table-column
         prop="coin_count"
         label="金币数">
       </el-table-column>
