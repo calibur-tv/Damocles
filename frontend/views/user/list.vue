@@ -31,6 +31,11 @@
           </a>
         </template>
       </el-table-column>
+      <el-table-column label="封面">
+        <template slot-scope="scope">
+          <img :src="$resize(scope.row.banner, { height: 100, mode: 2 })" alt="">
+        </template>
+      </el-table-column>
       <el-table-column
         prop="signature"
         label="签名"
