@@ -12,7 +12,8 @@ class VideoController extends Controller
 {
     public function edit(Request $request)
     {
-        Video::withTrashed()->where('id', $request->get('id'))
+        $videoId = $request->get('id');
+        Video::withTrashed()->where('id', $videoId)
             ->update([
                 'name' => $request->get('name'),
                 'bangumi_id' => $request->get('bangumi_id'),
@@ -22,15 +23,30 @@ class VideoController extends Controller
                 'resource' => json_encode($request->get('resource'))
             ]);
 
-        Redis::DEL('video_' . $request->get('id'));
+        Redis::DEL('video_' . $videoId);
         Redis::DEL('bangumi_' . $request->get('bangumi_id') . '_videos');
+
+        $job = (new \App\Jobs\Push\Baidu('video/' . $videoId, 'update'));
+        dispatch($job);
     }
 
     public function delete(Request $request)
     {
-        $video = Video::withTrashed()->find($request->get('id'));
+        $videoId = $request->get('id');
+        $video = Video::withTrashed()->find($videoId);
 
-        $request->get('isDeleted') ? $video->restore() : $video->delete();
+        if ($request->get('isDeleted'))
+        {
+            $video->restore();
+            $job = (new \App\Jobs\Push\Baidu('video/' . $videoId));
+            dispatch($job);
+        }
+        else
+        {
+            $video->delete();
+            $job = (new \App\Jobs\Push\Baidu('video/' . $videoId, 'del'));
+            dispatch($job);
+        }
     }
 
     public function list(Request $request)
@@ -93,7 +109,7 @@ class VideoController extends Controller
         foreach ($data as $video) {
             $id = Video::whereRaw('bangumi_id = ? and part = ?', [$video['bangumiId'], $video['part']])->pluck('id')->first();
             if (is_null($id)) {
-                Video::create([
+                $newId = Video::insertGetId([
                     'bangumi_id' => $video['bangumiId'],
                     'part' => $video['part'],
                     'name' => $video['name'],
@@ -101,6 +117,8 @@ class VideoController extends Controller
                     'resource' => $video['resource'] ? json_encode($video['resource']) : '',
                     'poster' => $video['poster']
                 ]);
+                $job = (new \App\Jobs\Push\Baidu('video/' . $newId));
+                dispatch($job);
             } else {
                 Video::where('id', $id)->update([
                     'bangumi_id' => $video['bangumiId'],
@@ -111,6 +129,8 @@ class VideoController extends Controller
                     'poster' => $video['poster']
                 ]);
                 Redis::DEL('video_' . $id);
+                $job = (new \App\Jobs\Push\Baidu('video/' . $id, 'update'));
+                dispatch($job);
             }
             Redis::DEL('bangumi_'.$video['bangumiId'].'_videos');
         }
