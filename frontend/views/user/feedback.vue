@@ -44,8 +44,16 @@
             value: 2
           },
           {
-            label: '资源问题',
+            label: '资源报错',
             value: 4
+          },
+          {
+            label: '求资源',
+            value: 5
+          },
+          {
+            label: '求偶像',
+            value: 6
           },
           {
             label: '其它问题',
