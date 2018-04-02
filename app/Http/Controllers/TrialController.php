@@ -45,7 +45,7 @@ class TrialController extends Controller
 
     public function posts()
     {
-        $list = Post::whereIn('state', [4, 4])->get();
+        $list = Post::withTrashed()->whereIn('state', [4, 5])->get();
         if (empty($list))
         {
             return [];
