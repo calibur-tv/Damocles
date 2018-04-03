@@ -108,7 +108,8 @@ class TrialController extends Controller
         Post::withTrashed()
             ->where('id', $request->get('id'))
             ->update([
-                'state' => 7
+                'state' => 7,
+                'deleted_at' => null
             ]);
     }
 
