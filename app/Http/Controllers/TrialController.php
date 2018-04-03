@@ -105,7 +105,8 @@ class TrialController extends Controller
 
     public function passPost(Request $request)
     {
-        Post::where('id', $request->get('id'))
+        Post::withTrashed()
+            ->where('id', $request->get('id'))
             ->update([
                 'state' => 7
             ]);
