@@ -146,4 +146,6 @@ Route::group(['middleware' => ['auth']], function ()
 
         Route::post('/recover', 'UserController@recover');
     });
+
+    Route::get('tips/count', 'TrialController@tipsCount');
 });
