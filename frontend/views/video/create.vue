@@ -379,10 +379,10 @@
           bangumi: false,
           prefix: false,
           suffix: false,
+          videos: false,
+          format: false,
           parts: false,
-          names: false,
-          video: false,
-          format: false
+          names: false
         }
       },
       changePosterSuffix(index) {

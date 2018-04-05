@@ -1,4 +1,4 @@
-<style lang="scss" scoped="">
+<style lang="scss">
   .sidebar {
     position: fixed;
     left: 0;
@@ -6,6 +6,11 @@
     height: 100%;
     width: $sidebar-collapse;
     overflow: hidden;
+
+    .el-badge__content {
+      top: 27px;
+      right: -5px;
+    }
   }
 
   .sidebar:not(.el-menu--collapse) {
@@ -61,20 +66,40 @@
     <el-submenu index="5">
       <template slot="title">
         <i class="el-icon-view"></i>
-        <span slot="title">审核</span>
+        <span slot="title">
+          <el-badge :value="counts.users + counts.posts">
+            审核
+          </el-badge>
+        </span>
       </template>
       <el-menu-item index="/trail/words">高危词</el-menu-item>
-      <el-menu-item index="/trail/users">用户审核</el-menu-item>
-      <el-menu-item index="/trail/posts">帖子审核</el-menu-item>
+      <el-menu-item index="/trail/users">
+        <el-badge :value="counts.users">
+          用户审核
+        </el-badge>
+      </el-menu-item>
+      <el-menu-item index="/trail/posts">
+        <el-badge :value="counts.posts">
+          帖子审核
+        </el-badge>
+      </el-menu-item>
     </el-submenu>
 
     <el-submenu index="6">
       <template slot="title">
         <i class="el-icon-bell"></i>
-        <span slot="title">用户</span>
+        <span slot="title">
+          <el-badge :value="counts.feedback">
+            用户
+          </el-badge>
+        </span>
       </template>
       <el-menu-item index="/user/list">用户列表</el-menu-item>
-      <el-menu-item index="/user/feedback">用户反馈</el-menu-item>
+      <el-menu-item index="/user/feedback">
+        <el-badge :value="counts.feedback">
+          用户反馈
+        </el-badge>
+      </el-menu-item>
     </el-submenu>
 
     <el-submenu index="99">
@@ -91,23 +116,26 @@
 <script>
   export default {
     name: 'v-sideBar',
-    components: {
-
-    },
     props: ['collapse'],
-    computed: {
-
-    },
     data () {
       return {
-        defaultActive: ''
+        defaultActive: '',
+        counts: {
+          users: 0,
+          posts: 0,
+          feedback: 0
+        }
       }
     },
     created () {
-
+      this.getTipsCount()
     },
     methods: {
-
+      getTipsCount () {
+        this.$http.get('tips/count').then((data) => {
+          this.counts = data
+        })
+      }
     },
     mounted () {
       this.defaultActive = this.$route.path

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Feedback;
 use App\Models\Post;
 use App\Models\PostImages;
 use App\Models\User;
@@ -124,5 +125,14 @@ class TrialController extends Controller
             ]);
 
         Redis::DEL('post_'.$postId.'_images');
+    }
+
+    public function tipsCount()
+    {
+        return [
+            'users' => User::withTrashed()->where('state', '<>', 0)->count(),
+            'posts' => Post::withTrashed()->whereIn('state', [4, 5])->count(),
+            'feedback' => Feedback::where('stage', 0)->count()
+        ];
     }
 }
