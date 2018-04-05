@@ -76,11 +76,11 @@
     <ul id="trial-post-table" class="main-view" v-loading="loading">
       <li v-for="(item, index) in list" :key="item.id">
         <div class="header">
-          <a :href="$href(`user/${item.user.zone}`)" class="user">
+          <a :href="$href(`user/${item.user.zone}`)" class="user" target="_blank">
             <img :src="$resize(item.user.avatar, { width: 50 })" alt="">
             <span class="nickname" v-text="item.user.nickname"></span>：
           </a>
-          <a :href="$href(`post/${item.id}`)">
+          <a :href="$href(`post/${item.id}`)" target="_blank">
             <h4 class="title" v-html="item.f_title.text || item.title"></h4>
           </a>
         </div>

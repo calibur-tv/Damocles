@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\PostImages;
 use App\Models\User;
 use App\Http\Services\Trial\WordsFilter;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
@@ -94,7 +95,12 @@ class TrialController extends Controller
     public function deletePost(Request $request)
     {
         $id = $request->get('id');
-        $post = Post::where('id', $id)->first();
+        $post = Post::withTrashed()->where('id', $id)->first();
+
+        if (is_null($post))
+        {
+            return;
+        }
 
         if (!(int)$post->parent_id)
         {
@@ -111,7 +117,10 @@ class TrialController extends Controller
             // 回复贴
         }
 
-        $post->delete();
+        $post->update([
+            'deleted_at' => Carbon::now(),
+            'state' => 6
+        ]);
     }
 
     public function passPost(Request $request)
