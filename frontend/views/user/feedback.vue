@@ -20,6 +20,10 @@
         label="内容"
         prop="desc">
       </el-table-column>
+      <el-table-column
+        label="浏览器"
+        prop="ua">
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button @click="remove(scope.$index, scope.row.id)">确认</el-button>
