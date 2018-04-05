@@ -60,7 +60,7 @@ class TrialController extends Controller
             $list[$i]['f_content'] = $filter->filter($row['content']);
             $list[$i]['words'] = $filter->filter($row['title'] . $row['content']);
             $list[$i]['images'] = PostImages::where('post_id', $row['id'])->get();
-            $list[$i]['user'] = User::where('id', $row['user_id'])->first();
+            $list[$i]['user'] = User::withTrashed()->where('id', $row['user_id'])->first();
         }
 
         return $list;
@@ -96,10 +96,20 @@ class TrialController extends Controller
         $id = $request->get('id');
         $post = Post::where('id', $id)->first();
 
-        Redis::DEL('post_'.$id);
-        Redis::ZREM('post_how_ids', $id);
-        Redis::ZREM('post_new_ids', $id);
-        Redis::ZREM('bangumi_'.$post->bangumi_id.'_posts_new_ids', $id);
+        if (!(int)$post->parent_id)
+        {
+            // 主题帖
+            Redis::DEL('post_'.$id);
+            Redis::ZREM('post_how_ids', $id);
+            Redis::ZREM('post_new_ids', $id);
+            Redis::ZREM('bangumi_'.$post->bangumi_id.'_posts_new_ids', $id);
+        }
+        else
+        {
+            Redis::DEL('post_'.$id .'_ids_only');
+            Redis::DEL('post_'.$id .'_ids');
+            // 回复贴
+        }
 
         $post->delete();
     }
