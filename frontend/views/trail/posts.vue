@@ -73,6 +73,8 @@
 
 <template>
   <section>
+    <el-input v-model="postId" placeholder="请输入帖子id"></el-input>
+    <el-button @click="handlePostDelete">删除</el-button>
     <ul id="trial-post-table" class="main-view" v-loading="loading">
       <li v-for="(item, index) in list" :key="item.id">
         <div class="header">
@@ -108,6 +110,7 @@
           <el-button size="small" type="danger" icon="edit" @click="delUser(index, item.user.id)">删人</el-button>
         </div>
       </li>
+      <h3 v-if="!list.length">暂无内容</h3>
     </ul>
   </section>
 </template>
@@ -117,7 +120,8 @@
     data () {
       return {
         list: [],
-        loading: true
+        loading: true,
+        postId: ''
       }
     },
     created () {
@@ -180,6 +184,19 @@
             this.$message.error('操作错误，请联系管理员');
           });
         }).catch(() => {});
+      },
+      handlePostDelete () {
+        this.$confirm('此操作不可逆, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http.post('trial/posts/delete', { id: this.postId }).then(() => {
+            this.$message.success('操作成功');
+          }).catch(() => {
+            this.$message.error('操作错误，请联系管理员');
+          });
+        }).catch(() => {})
       }
     }
   }
