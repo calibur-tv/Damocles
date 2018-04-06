@@ -1,4 +1,12 @@
 <style lang="scss">
+  #trial-post-header {
+    margin-bottom: 20px;
+
+    button {
+      margin-left: 5px;
+    }
+  }
+
   #trial-post-table {
 
     li {
@@ -73,8 +81,14 @@
 
 <template>
   <section>
-    <el-input v-model="postId" placeholder="请输入帖子id"></el-input>
-    <el-button @click="handlePostDelete">删除</el-button>
+    <header id="trial-post-header">
+      <el-col :span="6">
+        <el-input v-model="postId" placeholder="请输入帖子id"></el-input>
+      </el-col>
+      <el-col :span="2">
+        <el-button type="primary" @click="handlePostDelete">删除</el-button>
+      </el-col>
+    </header>
     <ul id="trial-post-table" class="main-view" v-loading="loading">
       <li v-for="(item, index) in list" :key="item.id">
         <div class="header">
