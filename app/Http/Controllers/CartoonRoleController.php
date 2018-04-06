@@ -17,8 +17,9 @@ class CartoonRoleController extends Controller
 
     public function create(Request $request)
     {
+        $bangumiId = $request->get('bangumi_id');
         $id =  CartoonRole::insertGetId([
-            'bangumi_id' => $request->get('bangumi_id'),
+            'bangumi_id' => $bangumiId,
             'avatar' => $request->get('avatar'),
             'name' => $request->get('name'),
             'intro' => $request->get('intro'),
@@ -32,13 +33,13 @@ class CartoonRoleController extends Controller
             'content' => $request->get('alias'),
             'type_id' => 4,
             'modal_id' => $id,
-            'url' => '/bangumi/' . $request->get('bangumi_id') . '/role/' . $id,
+            'url' => '/bangumi/' . $bangumiId . '/role/' . $id,
             'created_at' => $now,
             'updated_at' => $now
         ]);
 
         Redis::DEL('cartoon_role_trending_ids');
-        Redis::DEL('bangumi_'.$request->get('bangumi_id').'_cartoon_role_ids');
+        Redis::DEL('bangumi_'.$bangumiId.'_cartoon_role_ids');
 
         return $id;
     }
