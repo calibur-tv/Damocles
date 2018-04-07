@@ -55,13 +55,11 @@
     </el-table>
     <footer>
       <el-pagination
-        layout="total, sizes, prev, pager, next, jumper"
+        layout="total, prev, pager, next, jumper"
         :current-page="pagination.curPage"
-        :page-sizes="[24, 50, 100]"
         :page-size="pagination.pageSize"
         :pageCount="pagination.totalPage"
-        :total="list.length"
-        @size-change="handleSizeChange"
+        :total="pagination.total"
         @current-change="handleCurrentChange"
       ></el-pagination>
     </footer>
@@ -83,8 +81,10 @@
         bangumis: [],
         pagination: {
           totalPage: 0,
-          pageSize: 24,
-          curPage: 1
+          pageSize: 15,
+          curPage: 1,
+          total: 0,
+          maxPage: 1
         }
       }
     },
@@ -93,18 +93,40 @@
     },
     methods: {
       getList () {
-        this.$http.get('/cartoonRole/list').then((data) => {
+        this.$http.get('/cartoonRole/list', {
+          params: {
+            take: this.pagination.pageSize
+          }
+        }).then((data) => {
           this.list = data.role
           this.bangumis = data.bangumi
-          this.pagination.totalPage =  Math.ceil(this.list.length / this.pagination.pageSize)
+          this.pagination.totalPage =  Math.ceil(data.total / this.pagination.pageSize)
+          this.pagination.total = data.total
           this.loading = false
         })
       },
-      handleSizeChange(val) {
-        this.pagination.pageSize = val
-      },
       handleCurrentChange(val) {
-        this.pagination.curPage = val
+        if (val <= this.pagination.maxPage) {
+          this.pagination.curPage = val
+          return
+        }
+        if (val > this.pagination.maxPage) {
+          this.loading = true
+          this.$http.get('/cartoonRole/list', {
+            params: {
+              seenIds: this.list.map(_ => parseInt(_.id, 10)),
+              take: this.pagination.pageSize * (val - this.pagination.maxPage)
+            }
+          }).then((data) => {
+            this.list = this.list.concat(data)
+            this.pagination.curPage = val
+            this.pagination.maxPage = val
+            this.loading = false
+          }).catch(() => {
+            this.$message.error('加载失败，请重试');
+            this.loading = false
+          })
+        }
       },
       computeBangumi (bangumiId) {
         let result = '未知番剧'
