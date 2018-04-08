@@ -130,7 +130,7 @@
         <el-input
           type="textarea"
           :rows="2"
-          placeholder="请输入番剧季度信息，JSON格式，包含 part，time，name, re 字段"
+          placeholder="请输入番剧季度信息，JSON格式，包含 part，time，name, re, end 字段"
           v-model.trim="form.season">
         </el-input>
       </el-form-item>
@@ -144,7 +144,8 @@
             <div>5. 假设 part 有 N 个，那么 time 和 name 就有 N - 1 个，因此 part 至少是两个</div>
             <div>6. part 必须是升序排列的，从 0 开始，当番剧未完结时，最后一位是 -1</div>
             <div>7. re 代表每个季度之间的集数是否重拍，如果是 1 则重拍，如果是 0 或不填则不重拍</div>
-            <div>8. 关于 JSON，你可能需要在这里进行格式校验：<a href="http://www.json.cn/" target="_blank">JSON格式化工具</a></div>
+            <div>8. 如果番剧已完结，end 为 1，默认为 0 </div>
+            <div>9. 关于 JSON，你可能需要在这里进行格式校验：<a href="http://www.json.cn/" target="_blank">JSON格式化工具</a></div>
           </el-collapse-item>
         </el-collapse>
       </el-form-item>
