@@ -22,7 +22,8 @@ class Bangumi extends Model
         'count_like',
         'count_score',
         'collection_id',
-        'others_site_video'
+        'others_site_video',
+        'end'
     ];
 
     protected $casts = [
@@ -30,7 +31,8 @@ class Bangumi extends Model
         'released_video_id' => 'integer',
         'published_at' => 'integer',
         'collection_id' => 'integer',
-        'others_site_video' => 'integer'
+        'others_site_video' => 'integer',
+        'end' => 'boolean'
     ];
 
     public function tags()
