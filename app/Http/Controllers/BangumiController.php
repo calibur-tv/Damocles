@@ -30,6 +30,7 @@ class BangumiController extends Controller
             'collection_id' => $request->get('collection_id'),
             'published_at' => $request->get('published_at') ?: 0,
             'others_site_video' => $request->get('others_site_video'),
+            'end' => $request->get('end'),
             'deleted_at' => Carbon::now(),
             'count_score' => 0
         ]);
@@ -146,6 +147,7 @@ class BangumiController extends Controller
             'alias' => $request->get('alias') ? json_encode([
                 'search' => $request->get('alias')
             ]) : 'null',
+            'end' => $request->get('end'),
             'collection_id' => $request->get('collection_id'),
             'published_at' => $request->get('published_at'),
             'others_site_video' => $request->get('others_site_video')
