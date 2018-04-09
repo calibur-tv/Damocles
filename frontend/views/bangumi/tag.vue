@@ -19,7 +19,12 @@
         label="名称">
       </el-table-column>
       <el-table-column
-        label="类型">
+        prop="model"
+        label="类型"
+        :filters="models"
+        :filter-method="filterTag"
+        filter-placement="bottom-start"
+      >
         <template slot-scope="scope">
           {{ modelFormat(scope.row.model) }}
         </template>
@@ -55,8 +60,10 @@
           <el-select v-model="createForm.model" placeholder="请选择">
             <el-option
               v-for="model in models"
-              :key="model.id"
-              :value="model.name">
+              :key="model.value"
+              :value="model.value"
+              :label="model.text"
+            >
             </el-option>
           </el-select>
         </el-form-item>
@@ -98,8 +105,16 @@
         },
         models: [
           {
-            id: '0',
-            name: '番剧'
+            value: '0',
+            text: '番剧'
+          },
+          {
+            value: '1',
+            text: '图片类型'
+          },
+          {
+            value: '2',
+            text: '图片尺寸'
           }
         ],
         showEditorModal: false,
@@ -136,13 +151,16 @@
       },
       modelFormat(key) {
         for (const model of this.models) {
-          if (model.name === key) {
-            return model.id
+          if (model.text === key) {
+            return model.value
           }
-          if (model.id === key) {
-            return model.name
+          if (model.value === key) {
+            return model.text
           }
         }
+      },
+      filterTag(value, row) {
+        return row.model === value;
       },
       handleEditOpen(index, row) {
         this.editForm = {
@@ -170,7 +188,7 @@
       },
       handleCreateDone() {
         for (const tag of this.list) {
-          if (tag.name === this.createForm.name) {
+          if (tag.name === this.createForm.name && tag.model === this.createForm.model) {
             this.$message({
               message: '标签已存在',
               type: 'warning'
@@ -180,12 +198,12 @@
         }
         this.$http.post('/tag/create', {
           name: this.createForm.name,
-          model: this.modelFormat(this.createForm.model)
+          model: this.createForm.model
         }).then((data) => {
           this.list.push({
             id: data,
             name: this.createForm.name,
-            model: this.modelFormat(this.createForm.model)
+            model: this.createForm.model
           });
           this.showCreateModal = false;
           this.$message.success('操作成功');
