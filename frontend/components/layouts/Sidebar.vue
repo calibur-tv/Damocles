@@ -67,21 +67,20 @@
       <template slot="title">
         <i class="el-icon-view"></i>
         <span slot="title">
-          <el-badge :value="counts.users + counts.posts">
+          <el-badge :value="counts.users + counts.posts + counts.images">
             审核
           </el-badge>
         </span>
       </template>
       <el-menu-item index="/trail/words">高危词</el-menu-item>
       <el-menu-item index="/trail/users">
-        <el-badge :value="counts.users">
-          用户审核
-        </el-badge>
+        <el-badge :value="counts.users">用户审核</el-badge>
       </el-menu-item>
       <el-menu-item index="/trail/posts">
-        <el-badge :value="counts.posts">
-          帖子审核
-        </el-badge>
+        <el-badge :value="counts.posts">帖子审核</el-badge>
+      </el-menu-item>
+      <el-menu-item index="/trail/images">
+        <el-badge :value="counts.images">图片审核</el-badge>
       </el-menu-item>
     </el-submenu>
 

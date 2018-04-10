@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Feedback;
+use App\Models\Image;
 use App\Models\Post;
 use App\Models\PostImages;
 use App\Models\User;
@@ -151,7 +152,31 @@ class TrialController extends Controller
         return [
             'users' => User::withTrashed()->where('state', '<>', 0)->count(),
             'posts' => Post::withTrashed()->whereIn('state', [4, 5])->count(),
+            'images' => Image::withTrashed()->where('state', 1)->count(),
             'feedback' => Feedback::where('stage', 0)->count()
         ];
+    }
+
+    public function images()
+    {
+        return Image::withTrashed()->where('state', 1)->get();
+    }
+
+    public function passImage(Request $request)
+    {
+        Image::withTrashed()->where('id', $request->get('id'))
+            ->update([
+                'state' => 0,
+                'deleted_at' => null
+            ]);
+    }
+
+    public function deleteImage(Request $request)
+    {
+        Image::withTrashed()->where('id', $request->get('id'))
+            ->update([
+                'state' => 2,
+                'deleted_at' => Carbon::now()
+            ]);
     }
 }

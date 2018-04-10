@@ -121,6 +121,15 @@ Route::group(['middleware' => ['auth']], function ()
 
             Route::post('/deleteImage', 'TrialController@deletePostImage');
         });
+
+        Route::group(['prefix' => 'images'], function ()
+        {
+            Route::get('/list', 'TrialController@images');
+
+            Route::post('/pass', 'TrialController@passImage');
+
+            Route::post('/delete', 'TrialController@deleteImage');
+        });
     });
 
     Route::group(['prefix' => 'cartoonRole'], function ()
