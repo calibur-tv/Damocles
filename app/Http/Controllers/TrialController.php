@@ -159,14 +159,15 @@ class TrialController extends Controller
 
     public function images()
     {
-        return Image::withTrashed()->where('state', 1)->get();
+        // 0：新建，1：审核通过，2：需要审核，3：审核删除
+        return Image::withTrashed()->where('state', 2)->get();
     }
 
     public function passImage(Request $request)
     {
         Image::withTrashed()->where('id', $request->get('id'))
             ->update([
-                'state' => 0,
+                'state' => 1,
                 'deleted_at' => null
             ]);
     }
@@ -175,7 +176,7 @@ class TrialController extends Controller
     {
         Image::withTrashed()->where('id', $request->get('id'))
             ->update([
-                'state' => 2,
+                'state' => 3,
                 'deleted_at' => Carbon::now()
             ]);
     }
