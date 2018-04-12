@@ -159,8 +159,8 @@ class TrialController extends Controller
 
     public function images()
     {
-        // 0：新建，1：审核通过，2：需要审核，3：审核删除
-        return Image::withTrashed()->where('state', 2)->get();
+        // 0：新建，1：审核通过，2：需要审核，3：审核删除, 4：用户举报
+        return Image::withTrashed()->whereIn('state', [2, 4])->get();
     }
 
     public function passImage(Request $request)
