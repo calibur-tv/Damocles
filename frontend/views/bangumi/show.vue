@@ -146,7 +146,7 @@
             <div>4. time 和 name 代表该季度的上映日期和名称，如果没有特殊名称，就填写'第一季、第二季'</div>
             <div>5. 假设 part 有 N 个，那么 time 和 name 就有 N - 1 个，因此 part 至少是两个</div>
             <div>6. part 必须是升序排列的，从 0 开始，当番剧未完结时，最后一位是 -1</div>
-            <div>7. re 代表每个季度之间的集数是否重排，如果是 1 则重拍，如果是 0 或不填则不重拍</div>
+            <div>7. re 代表每个季度之间的集数是否重排，如果是 1 则重拍，如果是 0 或不填则不重排</div>
             <div>9. re 也可以和 name 是一个数组，但它的长度必须和 name 一样，并且每一项都是 0 或 1</div>
             <div>9. 关于 JSON，你可能需要在这里进行格式校验：<a href="http://www.json.cn/" target="_blank">JSON格式化工具</a></div>
           </el-collapse-item>

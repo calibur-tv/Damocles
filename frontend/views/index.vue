@@ -2,11 +2,12 @@
   <div>
     <h1>总用户数：{{ states.total_user }}</h1>
     <h1>总帖子数：{{ states.total_post }}</h1>
-    <h1>总图片数：{{ states.total_image }}</h1>
+    <h1>帖子里的总图片数：{{ states.total_image }}</h1>
     <h1>总番剧数：{{ states.total_bangumi }}</h1>
     <h1>总标签数：{{ states.total_tag }}</h1>
     <h1>总视频数：{{ states.total_video }}</h1>
     <h1>总角色数：{{ states.total_role }}</h1>
+    <h1>总图片数：{{ states.total_user_image }}</h1>
   </div>
 </template>
 
