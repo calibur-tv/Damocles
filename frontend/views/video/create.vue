@@ -195,7 +195,7 @@
             <div style="padding: 14px;">
               <span>【第 {{ index + form.parts[0] }} 集】{{ form.titles[index] }}</span>
               <div class="bottom clearfix">
-                <a v-if="form.haveSelfResource" :href="`https://video.calibur.tv/bangumi/${form.prefix}/video/720/${index + form.parts[0]}.${form.format}`" target="_blank">查看视频资源</a>
+                <a v-if="form.haveSelfResource" :href="`https://image.calibur.tv/bangumi/${form.prefix}/video/720/${index + form.parts[0]}.${form.format}`" target="_blank">查看视频资源</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <a v-if="form.urls[index]" :href="form.urls[index]" target="_blank">查看外链资源</a>
               </div>
