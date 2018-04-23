@@ -20,9 +20,10 @@
         label="内容"
         prop="desc">
       </el-table-column>
-      <el-table-column
-        label="浏览器"
-        prop="ua">
+      <el-table-column label="浏览器">
+        <template slot-scope="scope">
+          <div v-html="computeUA(scope.row.ua)"></div>
+        </template>
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
@@ -34,6 +35,8 @@
 </template>
 
 <script>
+  import UaDetector from '~/assets/js/ua'
+
   export default {
     name: 'userFeedback',
     data () {
@@ -86,6 +89,10 @@
           }
         })
         return result
+      },
+      computeUA (ua) {
+        const parser = new UaDetector(ua).parse
+        return `系统：${parser.os.name} - ${parser.os.fullVersion}<br>浏览器：${parser.browser.name} - ${parser.browser.fullVersion}`
       },
       remove (index, id) {
         this.$http.post('/user/feedback/read', {
