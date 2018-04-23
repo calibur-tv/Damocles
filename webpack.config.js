@@ -29,6 +29,7 @@ module.exports = {
     extensions: ['.js', '.vue', '.scss'],
     alias: {
       'vue$': 'vue/dist/vue.common.js',
+      '~': resolve('./frontend'),
       'view': resolve('./frontend/views'),
       'assets': resolve('./frontend/assets'),
       'component': resolve('./frontend/components')
