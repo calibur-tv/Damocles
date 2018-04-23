@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Menu;
 use App\Models\Bangumi;
 use App\Models\CartoonRole;
+use App\Models\Image;
 use App\Models\Post;
 use App\Models\PostImages;
 use App\Models\Tag;
@@ -29,6 +30,7 @@ class PageController extends Controller
         $totalTag = Tag::count();
         $totalVideo = Video::count();
         $totalRole = CartoonRole::count();
+        $totalUserImage = Image::count();
 
         return response()->json(['data' => [
             'total_user' => $totalUser,
@@ -37,7 +39,8 @@ class PageController extends Controller
             'total_bangumi' => $totalBangumi,
             'total_tag' => $totalTag,
             'total_video' => $totalVideo,
-            'total_role' => $totalRole
+            'total_role' => $totalRole,
+            'total_user_image' => $totalUserImage
         ]], 200);
     }
 
