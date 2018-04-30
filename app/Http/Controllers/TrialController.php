@@ -165,11 +165,15 @@ class TrialController extends Controller
 
     public function passImage(Request $request)
     {
-        Image::withTrashed()->where('id', $request->get('id'))
+        $id = $request->get('id');
+
+        Image::withTrashed()->where('id', $id)
             ->update([
                 'state' => 1,
                 'deleted_at' => null
             ]);
+
+        Redis::DEL('user_image_' . $id);
     }
 
     public function deleteImage(Request $request)
