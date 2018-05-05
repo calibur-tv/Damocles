@@ -6,6 +6,7 @@ use App\Models\Feedback;
 use App\Models\User;
 use App\Models\UserZone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 use Overtrue\LaravelPinyin\Facades\Pinyin as Overtrue;
 
 class UserController extends Controller
@@ -74,11 +75,14 @@ class UserController extends Controller
             return response()->json(['data' => '手机号已被占用'], 403);
         }
 
-        User::where('id', $request->get('id'))
+        $userId = $request->get('id');
+        User::where('id', $userId)
             ->update([
                 'phone' => $phone,
                 'faker' => 0
             ]);
+
+        Redis::DEL('user_' . $userId);
 
         return response()->json(['data' => ''], 200);
     }
