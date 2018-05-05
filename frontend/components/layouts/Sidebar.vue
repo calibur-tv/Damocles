@@ -94,6 +94,7 @@
         </span>
       </template>
       <el-menu-item index="/user/list">用户列表</el-menu-item>
+      <el-menu-item index="/user/fakers">运营号</el-menu-item>
       <el-menu-item index="/user/feedback">
         <el-badge :value="counts.feedback">
           用户反馈
