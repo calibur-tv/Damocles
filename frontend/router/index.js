@@ -98,6 +98,11 @@ export default new Router({
       component: require('view/user/list').default
     },
     {
+      path: '/user/fakers',
+      name: '运营号',
+      component: require('view/user/fakers').default
+    },
+    {
       path: '/user/feedback',
       name: '用户反馈',
       component: require('view/user/feedback').default

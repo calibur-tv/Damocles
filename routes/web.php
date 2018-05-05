@@ -147,6 +147,8 @@ Route::group(['middleware' => ['auth']], function ()
     {
         Route::get('/list', 'UserController@list');
 
+        Route::get('/fakerUsers', 'UserController@fakerList');
+
         Route::get('/feedback', 'UserController@feedback');
 
         Route::post('/feedback/read', 'UserController@readFeedback');
@@ -154,6 +156,10 @@ Route::group(['middleware' => ['auth']], function ()
         Route::post('/block', 'UserController@block');
 
         Route::post('/recover', 'UserController@recover');
+
+        Route::post('/createFaker', 'UserController@createFaker');
+
+        Route::post('/rebornFakerUser', 'UserController@rebornFakerUser');
     });
 
     Route::get('tips/count', 'TrialController@tipsCount');

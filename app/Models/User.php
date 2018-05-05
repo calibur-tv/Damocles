@@ -15,7 +15,10 @@ class User extends Model
         'banner',
         'nickname',
         'signature',
-        'state'
+        'zone',
+        'phone',
+        'faker',
+        'password'
     ];
 
     public function getAvatarAttribute($avatar)
