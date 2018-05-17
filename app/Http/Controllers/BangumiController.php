@@ -57,7 +57,7 @@ class BangumiController extends Controller
             Redis::DEL('bangumi_release_list');
         }
 
-        $job = (new \App\Jobs\Push\Baidu('bangumi' . $bangumi_id));
+        $job = (new \App\Jobs\Push\Baidu('bangumi/' . $bangumi_id));
         dispatch($job);
     }
 
@@ -182,7 +182,7 @@ class BangumiController extends Controller
             Redis::DEL('bangumi_'.$bangumi_id);
             Redis::DEL('bangumi_'.$bangumi_id.'_videos');
 
-            $job = (new \App\Jobs\Push\Baidu('bangumi' . $bangumi_id, 'update'));
+            $job = (new \App\Jobs\Push\Baidu('bangumi/' . $bangumi_id, 'update'));
             dispatch($job);
         }
     }
@@ -209,7 +209,7 @@ class BangumiController extends Controller
                 'updated_at' => $now
             ]);
 
-            $job = (new \App\Jobs\Push\Baidu('bangumi' . $bangumi_id));
+            $job = (new \App\Jobs\Push\Baidu('bangumi/' . $bangumi_id));
             dispatch($job);
         }
         else
@@ -219,7 +219,7 @@ class BangumiController extends Controller
             MixinSearch::whereRaw('type_id = ? and modal_id = ?', [2, $bangumi_id])
                 ->delete();
 
-            $job = (new \App\Jobs\Push\Baidu('bangumi' . $bangumi_id, 'del'));
+            $job = (new \App\Jobs\Push\Baidu('bangumi/' . $bangumi_id, 'del'));
             dispatch($job);
         }
     }

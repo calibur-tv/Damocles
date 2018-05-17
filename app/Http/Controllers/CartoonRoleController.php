@@ -41,6 +41,9 @@ class CartoonRoleController extends Controller
         Redis::DEL('cartoon_role_trending_ids');
         Redis::DEL('bangumi_'.$bangumiId.'_cartoon_role_ids');
 
+        $job = (new \App\Jobs\Push\Baidu('role/' . $id));
+        dispatch($job);
+
         return $id;
     }
 
@@ -70,7 +73,9 @@ class CartoonRoleController extends Controller
 
     public function edit(Request $request)
     {
-        CartoonRole::where('id', $request->get('id'))->update([
+        $id = $request->get('id');
+
+        CartoonRole::where('id', $id)->update([
             'bangumi_id' => $request->get('bangumi_id'),
             'avatar' => $request->get('avatar'),
             'name' => $request->get('name'),
@@ -78,7 +83,7 @@ class CartoonRoleController extends Controller
             'alias' => $request->get('alias')
         ]);
 
-        $searchId = MixinSearch::whereRaw('type_id = ? and modal_id = ?', [4, $request->get('id')])
+        $searchId = MixinSearch::whereRaw('type_id = ? and modal_id = ?', [4, $id])
             ->pluck('id')
             ->first();
 
@@ -89,5 +94,8 @@ class CartoonRoleController extends Controller
                 'content' => $request->get('alias')
             ]);
         }
+
+        $job = (new \App\Jobs\Push\Baidu('role/' . $id, 'update'));
+        dispatch($job);
     }
 }
