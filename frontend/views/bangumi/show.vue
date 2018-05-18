@@ -38,6 +38,12 @@
       <el-form-item label="已完结">
         <el-switch v-model="form.end"></el-switch>
       </el-form-item>
+      <el-form-item label="有视频">
+        <el-switch v-model="form.has_video"></el-switch>
+      </el-form-item>
+      <el-form-item label="有漫画">
+        <el-switch v-model="form.has_cartoon"></el-switch>
+      </el-form-item>
       <el-form-item label="上映日期" prop="published_at" v-if="!form.isCollection" required>
         <el-date-picker v-model="form.published_at" type="date" placeholder="选择日期"></el-date-picker>
       </el-form-item>
@@ -328,7 +334,9 @@
           summary: '',
           others_site_video: false,
           isCollection: false,
-          end: false
+          end: false,
+          has_video: true,
+          has_cartoon: false
         },
         rules: {
           name: [

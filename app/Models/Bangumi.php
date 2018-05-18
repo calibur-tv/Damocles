@@ -23,7 +23,9 @@ class Bangumi extends Model
         'count_score',
         'collection_id',
         'others_site_video',
-        'end'
+        'end',
+        'has_video',
+        'has_cartoon'
     ];
 
     protected $casts = [
@@ -32,7 +34,9 @@ class Bangumi extends Model
         'published_at' => 'integer',
         'collection_id' => 'integer',
         'others_site_video' => 'boolean',
-        'end' => 'boolean'
+        'end' => 'boolean',
+        'has_video' => 'boolean',
+        'has_cartoon' => 'boolean',
     ];
 
     public function tags()

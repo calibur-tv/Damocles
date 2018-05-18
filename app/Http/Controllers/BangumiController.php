@@ -150,7 +150,9 @@ class BangumiController extends Controller
             'end' => $request->get('end'),
             'collection_id' => $request->get('collection_id'),
             'published_at' => $request->get('published_at'),
-            'others_site_video' => $request->get('others_site_video')
+            'others_site_video' => $request->get('others_site_video'),
+            'has_cartoon' => $request->get('has_cartoon'),
+            'has_video' => $request->get('has_video')
         ];
 
         $result = $bangumi->update($arr);
