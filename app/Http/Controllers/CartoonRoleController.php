@@ -68,7 +68,7 @@ class CartoonRoleController extends Controller
 
         return [
             'list' => $list,
-            'role' => CartoonRole::select('id', 'name')->get(),
+            'role' => CartoonRole::select('id', 'name', 'bangumi_id')->get(),
             'bangumi' => Bangumi::all(),
             'total' => $total
         ];
