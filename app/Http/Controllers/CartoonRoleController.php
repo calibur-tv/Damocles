@@ -18,15 +18,17 @@ class CartoonRoleController extends Controller
     public function create(Request $request)
     {
         $bangumiId = $request->get('bangumi_id');
+        $now = time();
+
         $id =  CartoonRole::insertGetId([
             'bangumi_id' => $bangumiId,
             'avatar' => $request->get('avatar'),
             'name' => $request->get('name'),
             'intro' => $request->get('intro'),
-            'alias' => $request->get('alias')
+            'alias' => $request->get('alias'),
+            'created_at' => $now,
+            'updated_at' => $now
         ]);
-
-        $now = time();
 
         MixinSearch::create([
             'title' => $request->get('name'),
