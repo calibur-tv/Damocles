@@ -13,6 +13,8 @@ use App\Models\User;
 use App\Models\Video;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class PageController extends Controller
 {
@@ -23,25 +25,16 @@ class PageController extends Controller
 
     public function indexData()
     {
-        $totalUser = User::count();
-        $totalPost = Post::where('parent_id', 0)->count();
-        $totalImage = PostImages::count();
-        $totalBangumi = Bangumi::count();
-        $totalTag = Tag::count();
-        $totalVideo = Video::count();
-        $totalRole = CartoonRole::count();
-        $totalUserImage = Image::count();
+        $today = strtotime(date('Y-m-d', time()));
 
-        return response()->json(['data' => [
-            'total_user' => $totalUser,
-            'total_post' => $totalPost,
-            'total_image' => $totalImage,
-            'total_bangumi' => $totalBangumi,
-            'total_tag' => $totalTag,
-            'total_video' => $totalVideo,
-            'total_role' => $totalRole,
-            'total_user_image' => $totalUserImage
-        ]], 200);
+        $data = Cache::remember('admin-index-data-' . $today, 720, function () use ($today)
+        {
+            return DB::table('day_stats')
+                ->where('day', '>', $today - 86400 * 30)
+                ->get();
+        });
+
+        return response()->json(['data' => $data], 200);
     }
 
     public function bangumi()
