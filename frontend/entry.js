@@ -5,9 +5,10 @@ import store from './store'
 import Helpers from './utils/helpers'
 import Element from 'element-ui'
 import Modal from 'component/modal'
+import VCharts from 'v-charts'
 import 'lodash'
-import Pagination from './utils/pagination'
 
+Vue.use(VCharts)
 Vue.use(Element)
 Vue.use(Helpers)
 Vue.component(Modal.name, Modal)

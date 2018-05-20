@@ -30,9 +30,11 @@
   "dependencies": {
     "axios": "^0.16.2",
     "deep-assign": "^2.0.0",
+    "echarts": "^4.1.0",
     "element-ui": "^2.0.4",
     "lodash": "^4.17.4",
     "moment": "^2.19.1",
+    "v-charts": "^1.16.12",
     "vue": "^2.5.3",
     "vue-moment": "^2.0.2",
     "vue-router": "^3.0.1",
