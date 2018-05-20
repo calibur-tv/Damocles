@@ -49,23 +49,26 @@ class CartoonRoleController extends Controller
 
     public function list(Request $request)
     {
-        $take = $request->get('take');
-        $seenIds = $request->get('seenIds') ?: [];
+        $take = $request->get('take') ?: 10;
+        $minId = $request->get('minId') ?: 0;
 
-        $role = CartoonRole::whereNotIn('id', $seenIds)
-            ->orderBy('id', 'DESC')
+        $list = CartoonRole::orderBy('id', 'DESC')
+            ->when($minId, function ($query) use ($minId) {
+                return $query->where('id', '<' ,$minId);
+            })
             ->take($take)
             ->get();
 
-        if (!empty($seenIds))
+        if ($minId)
         {
-            return $role;
+            return $list;
         }
 
         $total = CartoonRole::count();
 
         return [
-            'role' => $role,
+            'list' => $list,
+            'role' => CartoonRole::select('id', 'name')->get(),
             'bangumi' => Bangumi::all(),
             'total' => $total
         ];
