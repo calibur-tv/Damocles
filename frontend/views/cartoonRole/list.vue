@@ -207,6 +207,7 @@
         return result
       },
       handleSearch () {
+        this.searchRole = []
         if (this.roleId) {
           this.roles.forEach(item => {
             if (item.id === this.roleId) {
@@ -216,7 +217,7 @@
         } else {
           this.roles.forEach(item => {
             if (item.bangumi_id === this.searchId) {
-              this.searchRole = [item]
+              this.searchRole.push(item)
             }
           })
         }
