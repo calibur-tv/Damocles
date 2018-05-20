@@ -47,6 +47,12 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="所属番剧">
+          <template slot-scope="scope">
+            <a :href="$href(`bangumi/${scope.row.bangumi_id}`)" target="_blank">{{ computeBangumi(scope.row.bangumi_id) }}</a>
+          </template>
+        </el-table-column>
+        <el-table-column
           width="200"
           label="操作">
           <template slot-scope="scope">
@@ -201,11 +207,19 @@
         return result
       },
       handleSearch () {
-        this.roles.forEach(item => {
-          if (item.id === (this.roleId || this.searchId)) {
-            this.searchRole = [item]
-          }
-        })
+        if (this.roleId) {
+          this.roles.forEach(item => {
+            if (item.id === this.roleId) {
+              this.searchRole = [item]
+            }
+          })
+        } else {
+          this.roles.forEach(item => {
+            if (item.bangumi_id === this.searchId) {
+              this.searchRole = [item]
+            }
+          })
+        }
       }
     }
   }
