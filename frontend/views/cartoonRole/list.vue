@@ -18,7 +18,7 @@
           </el-select>
         </el-col>
         <el-col :span="6" :offset="1">
-          <el-select :disabled="!!roleId" v-model="searchId" filterable clearable placeholder="按照番剧搜索">
+          <el-select :disabled="!!roleId" v-model="searchId" @change="handleSearch" filterable clearable placeholder="按照番剧搜索">
             <el-option
               v-for="item in bangumis"
               :key="item.id"
@@ -202,7 +202,7 @@
       },
       handleSearch () {
         this.roles.forEach(item => {
-          if (item.id === this.roleId) {
+          if (item.id === (this.roleId || this.searchId)) {
             this.searchRole = [item]
           }
         })
