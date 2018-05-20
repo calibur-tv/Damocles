@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Video;
 use App\Models\Bangumi;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -106,6 +107,7 @@ class VideoController extends Controller
     public function saveVideos(Request $request)
     {
         $data = $request->all();
+        $time = Carbon::now();
         foreach ($data as $video) {
             $id = Video::whereRaw('bangumi_id = ? and part = ?', [$video['bangumiId'], $video['part']])->pluck('id')->first();
             if (is_null($id)) {
@@ -115,7 +117,9 @@ class VideoController extends Controller
                     'name' => $video['name'],
                     'url' => $video['url'] ? $video['url'] : '',
                     'resource' => $video['resource'] ? json_encode($video['resource']) : '',
-                    'poster' => $video['poster']
+                    'poster' => $video['poster'],
+                    'created_at' => $time,
+                    'updated_at' => $time
                 ]);
                 $job = (new \App\Jobs\Push\Baidu('video/' . $newId));
                 dispatch($job);
@@ -126,7 +130,8 @@ class VideoController extends Controller
                     'name' => $video['name'],
                     'url' => $video['url'] ? $video['url'] : '',
                     'resource' => $video['resource'] ? json_encode($video['resource']) : '',
-                    'poster' => $video['poster']
+                    'poster' => $video['poster'],
+                    'updated_at' => $time
                 ]);
                 Redis::DEL('video_' . $id);
                 $job = (new \App\Jobs\Push\Baidu('video/' . $id, 'update'));

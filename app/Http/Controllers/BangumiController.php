@@ -16,6 +16,7 @@ class BangumiController extends Controller
     public function create(Request $request)
     {
         $releasedId = $request->get('released_video_id') ?: 0;
+        $time = Carbon::now();
         $bangumi_id = Bangumi::insertGetId([
             'name' => $request->get('name'),
             'avatar' => $request->get('avatar'),
@@ -31,7 +32,9 @@ class BangumiController extends Controller
             'published_at' => $request->get('published_at') ?: 0,
             'others_site_video' => $request->get('others_site_video'),
             'end' => $request->get('end'),
-            'deleted_at' => Carbon::now(),
+            'created_at' => $time,
+            'updated_at' => $time,
+            'deleted_at' => $time,
             'count_score' => 0
         ]);
 
