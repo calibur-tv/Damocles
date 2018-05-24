@@ -7,6 +7,7 @@ use App\Models\CartoonRole;
 use App\Models\MixinSearch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
+use Carbon\Carbon;
 
 class CartoonRoleController extends Controller
 {
@@ -18,7 +19,7 @@ class CartoonRoleController extends Controller
     public function create(Request $request)
     {
         $bangumiId = $request->get('bangumi_id');
-        $now = time();
+        $time = Carbon::now();
 
         $id =  CartoonRole::insertGetId([
             'bangumi_id' => $bangumiId,
@@ -26,9 +27,11 @@ class CartoonRoleController extends Controller
             'name' => $request->get('name'),
             'intro' => $request->get('intro'),
             'alias' => $request->get('alias'),
-            'created_at' => $now,
-            'updated_at' => $now
+            'created_at' => $time,
+            'updated_at' => $time
         ]);
+
+        $now = time();
 
         MixinSearch::create([
             'title' => $request->get('name'),
