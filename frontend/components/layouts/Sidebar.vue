@@ -45,6 +45,7 @@
       </template>
       <el-menu-item index="/bangumi/list">番剧列表</el-menu-item>
       <el-menu-item index="/bangumi/tag">标签列表</el-menu-item>
+      <el-menu-item index="/bangumi/cartoon">漫画列表</el-menu-item>
     </el-submenu>
 
     <el-submenu index="3">

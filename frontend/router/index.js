@@ -38,6 +38,16 @@ export default new Router({
       component: require('view/bangumi/show').default
     },
     {
+      path: '/bangumi/cartoon',
+      name: '漫画列表',
+      component: require('view/bangumi/cartoon').default
+    },
+    {
+      path: '/bangumi/cartoon/edit/:id(\\d+)',
+      name: '编辑漫画',
+      component: require('view/bangumi/editCartoon').default
+    },
+    {
       path: '/bangumi/edit/:id(\\d+)',
       name: '编辑番剧',
       component: require('view/bangumi/show').default
