@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bangumi;
 use App\Models\BangumiCollection;
+use App\Models\Image;
 use App\Models\MixinSearch;
 use App\Models\Video;
 use Carbon\Carbon;
@@ -255,5 +256,40 @@ class BangumiController extends Controller
             'name' => $request->get('name'),
             'summary' => ''
         ]);
+    }
+
+    public function cartoonBangumiList()
+    {
+        $bangumis = Bangumi::where('cartoon', '<>', '')->select('id', 'name')->get();
+
+        return response()->json(['data' => $bangumis], 200);
+    }
+
+    public function cartoonDetail(Request $request)
+    {
+        $bangumiId = $request->get('id');
+
+        $ids = Bangumi::where('id', $bangumiId)->pluck('cartoon')->first();
+
+        $ids = explode(',', $ids);
+        $result = [];
+        foreach ($ids as $id)
+        {
+            $result[] = Image::where('id', $id)->select('id', 'name')->first();
+        }
+
+        return response()->json(['data' => $result], 200);
+    }
+
+    public function cartoonEdit(Request $request)
+    {
+        $bangumiId = $request->get('id');
+
+        Bangumi::where('id', $bangumiId)
+            ->update([
+                'cartoon' => $request->get('cartoon')
+            ]);
+
+        return response('success', 200);
     }
 }

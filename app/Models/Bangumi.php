@@ -25,7 +25,8 @@ class Bangumi extends Model
         'others_site_video',
         'end',
         'has_video',
-        'has_cartoon'
+        'has_cartoon',
+        'cartoon'
     ];
 
     protected $casts = [

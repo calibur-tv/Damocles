@@ -40,6 +40,12 @@ Route::group(['middleware' => ['auth']], function ()
         Route::post('/edit', 'BangumiController@edit');
 
         Route::post('/delete', 'BangumiController@delete');
+
+        Route::get('/cartoonBangumiList', 'BangumiController@cartoonBangumiList');
+
+        Route::post('/cartoonDetail', 'BangumiController@cartoonDetail');
+
+        Route::post('/cartoonEdit', 'BangumiController@cartoonEdit');
     });
 
     Route::group(['prefix' => 'video'], function ()
