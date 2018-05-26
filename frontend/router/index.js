@@ -98,6 +98,11 @@ export default new Router({
       component: require('view/trail/images').default
     },
     {
+      path: '/trail/comments',
+      name: '评论审核',
+      component: require('view/trail/comments').default
+    },
+    {
       path: '/admin/user',
       name: '管理员',
       component: require('view/admin/user').default

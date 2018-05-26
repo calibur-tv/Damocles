@@ -136,6 +136,15 @@ Route::group(['middleware' => ['auth']], function ()
 
             Route::post('/delete', 'TrialController@deleteImage');
         });
+
+        Route::group(['prefix' => 'comment'], function ()
+        {
+            Route::get('/list', 'TrialController@comments');
+
+            Route::post('/pass', 'TrialController@passComment');
+
+            Route::post('/ban', 'TrialController@deleteComment');
+        });
     });
 
     Route::group(['prefix' => 'cartoonRole'], function ()

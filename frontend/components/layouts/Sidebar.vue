@@ -68,7 +68,7 @@
       <template slot="title">
         <i class="el-icon-view"></i>
         <span slot="title">
-          <el-badge :value="counts.users + counts.posts + counts.images">
+          <el-badge :value="trialTotalCount">
             审核
           </el-badge>
         </span>
@@ -82,6 +82,9 @@
       </el-menu-item>
       <el-menu-item index="/trail/images">
         <el-badge :value="counts.images">图片审核</el-badge>
+      </el-menu-item>
+      <el-menu-item index="/trail/comments">
+        <el-badge :value="counts.comments">评论审核</el-badge>
       </el-menu-item>
     </el-submenu>
 
@@ -124,12 +127,24 @@
         counts: {
           users: 0,
           posts: 0,
-          feedback: 0
+          feedback: 0,
+          comments: 0
         }
       }
     },
     created () {
       this.getTipsCount()
+    },
+    computed: {
+      trialTotalCount () {
+        let result = 0
+        Object.keys(this.counts).forEach(key => {
+          if (key !== 'feedback') {
+            result += this.counts[key]
+          }
+        })
+        return result
+      }
     },
     methods: {
       getTipsCount () {

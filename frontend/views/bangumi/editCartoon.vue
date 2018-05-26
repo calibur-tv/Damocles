@@ -17,6 +17,7 @@
         <template slot-scope="scope">
           <el-button type="primary" :disabled="!scope.$index" @click="move(scope.$index, false)">上移</el-button>
           <el-button type="primary" :disabled="scope.$index === list.length - 1" @click="move(scope.$index, true)">下移</el-button>
+          <el-button type="primary" :disabled="!scope.$index" @click="toTop(scope.$index)">置顶</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -59,6 +60,11 @@
         const prev = toNext ? index : index - 1;
         const next = toNext ? index + 1 : index;
         this.list.splice(prev, 1, ...this.list.splice(next, 1, this.list[prev]))
+      },
+      toTop (index) {
+        const top0 = this.list[0]
+        this.$set(this.list, 0, this.list[index])
+        this.$set(this.list, index, top0)
       },
       submitForm () {
         this.$http.post('/bangumi/cartoonEdit', {

@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Http\Services\Trial\WordsFilter;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
 class TrialController extends Controller
@@ -149,11 +151,16 @@ class TrialController extends Controller
 
     public function tipsCount()
     {
+        $comments = 0;
+
+        $comments = $comments + DB::table('post_comments')->where('state', 2)->count();
+
         return [
             'users' => User::withTrashed()->where('state', '<>', 0)->count(),
             'posts' => Post::withTrashed()->whereIn('state', [4, 5])->count(),
             'images' => Image::withTrashed()->where('state', 2)->count(),
-            'feedback' => Feedback::where('stage', 0)->count()
+            'feedback' => Feedback::where('stage', 0)->count(),
+            'comments' => $comments
         ];
     }
 
@@ -183,5 +190,65 @@ class TrialController extends Controller
                 'state' => 3,
                 'deleted_at' => Carbon::now()
             ]);
+    }
+
+    public function comments()
+    {
+        $types = ['post'];
+        $result = [];
+        foreach ($types as $modal)
+        {
+            $list = DB::table($modal . '_comments')
+                ->where('state', 2)
+                ->select('id', 'user_id', 'content')
+                ->get();
+
+            if (is_null($list))
+            {
+                continue;
+            }
+
+            $list = json_decode(json_encode($list), true);
+            foreach ($list as $i => $item)
+            {
+                $list[$i]['type'] = $modal;
+            }
+
+            if (!is_null($list))
+            {
+                $result = array_merge($result, $list);
+            }
+        }
+
+        return $result;
+    }
+
+    public function passComment(Request $request)
+    {
+        $id = $request->get('id');
+        $type = $request->get('type');
+
+        DB::table($type . '_comments')->where('id', $id)
+            ->update([
+                'state' => 1,
+                'updated_at' => Carbon::now()
+            ]);
+
+        return response()->json(['data' => 'success'], 200);
+    }
+
+    public function deleteComment(Request $request)
+    {
+        $id = $request->get('id');
+        $type = $request->get('type');
+        $userId = Auth::id();
+
+        DB::table($type . '_comments')->where('id', $id)
+            ->update([
+                'state' => '5' . (String)$userId,
+                'updated_at' => Carbon::now()
+            ]);
+
+        return response()->json(['data' => 'success'], 200);
     }
 }
