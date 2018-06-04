@@ -151,7 +151,7 @@
           }
           this.$http.post('/user/createFaker', {
             nickname: value,
-            phone: Date.now()
+            phone: Date.now().toString().slice(0, -2)
           }).then((resp) => {
             this.list.unshift(resp.data)
           }).catch((err) => {
