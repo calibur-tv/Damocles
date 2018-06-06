@@ -275,7 +275,12 @@ class BangumiController extends Controller
         $result = [];
         foreach ($ids as $id)
         {
-            $result[] = Image::where('id', $id)->select('id', 'name')->first();
+            $image = Image::where('id', $id)->select('id', 'name')->first();
+            if (is_null($image))
+            {
+                continue;
+            }
+            $result[] = $image;
         }
 
         return response()->json(['data' => $result], 200);
