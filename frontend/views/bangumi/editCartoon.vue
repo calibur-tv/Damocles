@@ -62,9 +62,8 @@
         this.list.splice(prev, 1, ...this.list.splice(next, 1, this.list[prev]))
       },
       toTop (index) {
-        const top0 = this.list[0]
-        this.$set(this.list, 0, this.list[index])
-        this.$set(this.list, index, top0)
+        const move = this.list.splice(index, 1)
+        this.list = move.concat(this.list)
       },
       submitForm () {
         this.$http.post('/bangumi/cartoonEdit', {
