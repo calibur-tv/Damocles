@@ -45,6 +45,8 @@ Route::group(['middleware' => ['auth']], function ()
 
         Route::post('/cartoonDetail', 'BangumiController@cartoonDetail');
 
+        Route::post('/cartoonSort', 'BangumiController@cartoonSort');
+
         Route::post('/cartoonEdit', 'BangumiController@cartoonEdit');
     });
 

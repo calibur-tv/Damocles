@@ -8,9 +8,15 @@ export default {
     Vue.prototype.$deepAssign = deepAssign
 
     Vue.prototype.$resize = (url, options = {}) => {
-      if (url === '') {
+      if (!url) {
         return ''
       }
+
+      if (/imageMogr2/.test(url)) {
+        return url
+      }
+
+      const link = /^http/.test(url) ? url : `https://image.calibur.tv/${url}`
       const canUseWebP = () => {
         if (Vue.prototype.$isServer) {
           return false
@@ -31,15 +37,24 @@ export default {
       }
 
       const format = canUseWebP() ? '/format/webp' : ''
+      const mode = options.mode === undefined ? 1 : options.mode
 
-      if (options.width && options.width > 0) {
-        const width = `/w/${options.width}`
-        const mode = options.mode === undefined ? 1 : options.mode
-        const height = options.height ? `/h/${options.height}` : mode === 1 ? `/h/${options.width}` : ''
-
-        return `${url}?imageMogr2/auto-orient/strip|imageView2/${mode}${width}${height}${format}`
+      if ((mode === 1 && !options.width) || (!options.width && !options.height)) {
+        return `${link}?imageMogr2/auto-orient/strip${format}`
       }
-      return `${url}?imageMogr2/auto-orient/strip${format}`
+
+      let width
+      let height
+
+      if (mode === 1) {
+        width = `/w/${options.width}`
+        height = options.height ? `/h/${options.height}` : `/h/${options.width}`
+      } else {
+        width = options.width ? `/w/${options.width}` : ''
+        height = options.height ? `/h/${options.height}` : ''
+      }
+
+      return `${link}?imageMogr2/auto-orient/strip|imageView2/${mode}${width}${height}${format}`
     }
 
     Vue.prototype.$dev = window.location.host !== 'admin.calibur.tv'

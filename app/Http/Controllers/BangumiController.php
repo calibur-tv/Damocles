@@ -275,19 +275,30 @@ class BangumiController extends Controller
         $result = [];
         foreach ($ids as $id)
         {
-            $result[] = Image::where('id', $id)->select('id', 'name')->first();
+            $result[] = Image::where('id', $id)->first();
         }
 
         return response()->json(['data' => $result], 200);
     }
 
-    public function cartoonEdit(Request $request)
+    public function cartoonSort(Request $request)
     {
         $bangumiId = $request->get('id');
 
         Bangumi::where('id', $bangumiId)
             ->update([
                 'cartoon' => $request->get('cartoon')
+            ]);
+
+        return response('success', 200);
+    }
+
+    public function cartoonEdit(Request $request)
+    {
+        Image::where('id', $request->get('id'))
+            ->update([
+                'name' => $request->get('name'),
+                'url' => $request->get('url')
             ]);
 
         return response('success', 200);
