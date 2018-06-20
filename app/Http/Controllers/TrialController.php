@@ -154,6 +154,8 @@ class TrialController extends Controller
         $comments = 0;
 
         $comments = $comments + DB::table('post_comments')->where('state', 2)->count();
+        $comments = $comments + DB::table('image_comments')->where('state', 2)->count();
+        $comments = $comments + DB::table('video_comments')->where('state', 2)->count();
 
         return [
             'users' => User::withTrashed()->where('state', '<>', 0)->count(),
@@ -194,7 +196,7 @@ class TrialController extends Controller
 
     public function comments()
     {
-        $types = ['post'];
+        $types = ['post', 'video', 'image'];
         $result = [];
         foreach ($types as $modal)
         {
