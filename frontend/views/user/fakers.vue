@@ -119,7 +119,7 @@
         }
         if (val > this.pagination.maxPage) {
           this.loading = true
-          this.$http.get('/user/list', {
+          this.$http.get('/user/fakerUsers', {
             params: {
               seenIds: this.list.map(_ => parseInt(_.id, 10)),
               take: this.pagination.pageSize * (val - this.pagination.maxPage)
