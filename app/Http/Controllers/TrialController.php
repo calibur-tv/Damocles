@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\SearchService;
 use App\Models\Feedback;
 use App\Models\Image;
 use App\Models\Post;
@@ -72,10 +73,19 @@ class TrialController extends Controller
 
     public function delUserSomething(Request $request)
     {
-        User::where('id', $request->get('id'))
+        $userId = $request->get('id');
+        User::where('id', $userId)
             ->update([
                 $request->get('key') => $request->get('value') ?: ''
             ]);
+
+        $user = User::where('id', $userId)->first();
+        $searchService = new SearchService();
+        $searchService->update(
+            $userId,
+            $user->nickname . ',' . $user->zone,
+            'user'
+        );
     }
 
     public function passUser(Request $request)
@@ -87,12 +97,25 @@ class TrialController extends Controller
 
     public function deleteUser(Request $request)
     {
-        User::where('id', $request->get('id'))->delete();
+        $userId = $request->get('id');
+        User::where('id', $userId)->delete();
+        $searchService = new SearchService();
+        $searchService->delete($userId, 'user');
     }
 
     public function recoverUser(Request $request)
     {
-        User::withTrashed()->where('id', $request->get('id'))->restore();
+        $userId = $request->get('id');
+
+        User::withTrashed()->where('id', $userId)->restore();
+
+        $user = User::withTrashed()->where('id', $userId)->first();
+        $searchService = new SearchService();
+        $searchService->create(
+            $userId,
+            $user->nickname . ',' . $user->zone,
+            'user'
+        );
     }
 
     public function deletePost(Request $request)
@@ -124,16 +147,32 @@ class TrialController extends Controller
             'deleted_at' => Carbon::now(),
             'state' => 6
         ]);
+
+        $searchService = new SearchService();
+        $searchService->delete($id, 'post');
     }
 
     public function passPost(Request $request)
     {
+        $postId = $request->get('id');
         Post::withTrashed()
-            ->where('id', $request->get('id'))
+            ->where('id', $postId)
             ->update([
                 'state' => 7,
                 'deleted_at' => null
             ]);
+
+        $post = Post::withTrashed()
+            ->where('id', $postId)
+            ->first();
+
+        $searchService = new SearchService();
+        $searchService->create(
+            $postId,
+            $post->title . ',' . $post->desc,
+            'post',
+            strtotime($post->created_at)
+        );
     }
 
     public function deletePostImage(Request $request)
