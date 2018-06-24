@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\SearchService;
 use App\Models\Feedback;
 use App\Models\User;
 use App\Models\UserZone;
@@ -53,6 +54,7 @@ class UserController extends Controller
         $phone = $request->get('phone');
         $password = '$2y$10$zMAtJKR6iQyKyCJVItFBI.lJiVw/EN.nkvMawnFjMz2TOaW5gDSry';
         $zone = $this->createUserZone($nickname);
+        $searchService = new SearchService();
 
         $user = User::create([
             'nickname' => $nickname,
@@ -61,6 +63,12 @@ class UserController extends Controller
             'zone' => $zone,
             'faker' => 1
         ]);
+
+        $searchService->create(
+            $user->id,
+            $user->nickname . ',' . $zone,
+            'user'
+        );
 
         return response()->json(['data' => $user], 200);
     }
@@ -89,12 +97,24 @@ class UserController extends Controller
 
     public function block(Request $request)
     {
-        User::where('id', $request->get('id'))->delete();
+        $userId = $request->get('id');
+        User::where('id', $userId)->delete();
+        $searchService = new SearchService();
+        $searchService->delete($userId, 'user');
     }
 
     public function recover(Request $request)
     {
-        User::withTrashed()->where('id', $request->get('id'))->restore();
+        $userId = $request->get('id');
+        User::withTrashed()->where('id', $userId)->restore();
+
+        $user = User::withTrashed()->where('id', $userId)->first();
+        $searchService = new SearchService();
+        $searchService->create(
+            $userId,
+            $user->nickname . ',' . $user->zone,
+            'user'
+        );
     }
 
     public function feedback()

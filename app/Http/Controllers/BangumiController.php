@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\SearchService;
 use App\Models\Bangumi;
 use App\Models\BangumiCollection;
 use App\Models\Image;
-use App\Models\MixinSearch;
 use App\Models\Video;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -79,18 +79,6 @@ class BangumiController extends Controller
             'released_time' => time(),
             'released_video_id' => $video_id
         ]);
-
-        $searchId = MixinSearch::whereRaw('type_id = ? and modal_id = ?', [2, $bangumi_id])
-            ->pluck('id')
-            ->first();
-
-        if (!is_null($searchId))
-        {
-            MixinSearch::where('id', $searchId)->increment('score', 1);
-            MixinSearch::where('id', $searchId)->update([
-                'updated_at' => time()
-            ]);
-        }
 
         Redis::DEL('bangumi_release_list');
         Redis::DEL('bangumi_' . $bangumi_id);
@@ -173,17 +161,13 @@ class BangumiController extends Controller
         {
             DB::commit();
 
-            $searchId = MixinSearch::whereRaw('type_id = ? and modal_id = ?', [2, $bangumi_id])
-                ->pluck('id')
-                ->first();
+            $searchService = new SearchService();
 
-            if (!is_null($searchId))
-            {
-                MixinSearch::where('id', $searchId)->update([
-                    'title' => $request->get('name'),
-                    'content' => $request->get('alias')
-                ]);
-            }
+            $searchService->update(
+                $bangumi_id,
+                $request->get('name') . ',' . $request->get('alias'),
+                'bangumi'
+            );
 
             Redis::DEL('bangumi_'.$bangumi_id);
             Redis::DEL('bangumi_'.$bangumi_id.'_videos');
@@ -198,22 +182,17 @@ class BangumiController extends Controller
         $hasDeleted = $request->get('isDeleted') ;
         $bangumi_id = $request->get('id');
         $bangumi = Bangumi::withTrashed()->find($bangumi_id);
+        $searchService = new SearchService();
 
         if ($hasDeleted)
         {
             $bangumi->restore();
 
-            $now = time();
-
-            MixinSearch::create([
-                'title' => $bangumi->name,
-                'content' => $bangumi->alias === 'null' ? '' : json_decode($bangumi->alias)->search,
-                'type_id' => 2,
-                'modal_id' => $bangumi_id,
-                'url' => '/bangumi/' . $bangumi_id,
-                'created_at' => $now,
-                'updated_at' => $now
-            ]);
+            $searchService->create(
+                $bangumi_id,
+                $bangumi->name . ',' . ($bangumi->alias === 'null' ? '' : json_decode($bangumi->alias)->search),
+                'bangumi'
+            );
 
             $job = (new \App\Jobs\Push\Baidu('bangumi/' . $bangumi_id));
             dispatch($job);
@@ -222,8 +201,7 @@ class BangumiController extends Controller
         {
             $bangumi->delete();
 
-            MixinSearch::whereRaw('type_id = ? and modal_id = ?', [2, $bangumi_id])
-                ->delete();
+            $searchService->delete($bangumi_id, 'bangumi');
 
             $job = (new \App\Jobs\Push\Baidu('bangumi/' . $bangumi_id, 'del'));
             dispatch($job);

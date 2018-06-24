@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\SearchService;
 use App\Models\Bangumi;
 use App\Models\CartoonRole;
-use App\Models\MixinSearch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Carbon\Carbon;
@@ -31,17 +31,12 @@ class CartoonRoleController extends Controller
             'updated_at' => $time
         ]);
 
-        $now = time();
-
-        MixinSearch::create([
-            'title' => $request->get('name'),
-            'content' => $request->get('alias'),
-            'type_id' => 4,
-            'modal_id' => $id,
-            'url' => '/bangumi/' . $bangumiId . '/role/' . $id,
-            'created_at' => $now,
-            'updated_at' => $now
-        ]);
+        $searchService = new SearchService();
+        $searchService->create(
+            $id,
+            $request->get('name') . ',' . $request->get('alias'),
+            'role'
+        );
 
         Redis::DEL('cartoon_role_trending_ids');
         Redis::DEL('bangumi_'.$bangumiId.'_cartoon_role_ids');
@@ -91,17 +86,12 @@ class CartoonRoleController extends Controller
             'alias' => $request->get('alias')
         ]);
 
-        $searchId = MixinSearch::whereRaw('type_id = ? and modal_id = ?', [4, $id])
-            ->pluck('id')
-            ->first();
-
-        if (!is_null($searchId))
-        {
-            MixinSearch::where('id', $searchId)->update([
-                'title' => $request->get('name'),
-                'content' => $request->get('alias')
-            ]);
-        }
+        $searchService = new SearchService();
+        $searchService->update(
+            $id,
+            $request->get('name') . ',' . $request->get('alias'),
+            'role'
+        );
 
         $job = (new \App\Jobs\Push\Baidu('role/' . $id, 'update'));
         dispatch($job);
