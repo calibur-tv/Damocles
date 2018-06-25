@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
  */
 class SearchService
 {
-    protected $table = 'search_v2';
+    protected $table = 'search_v3';
 
     public function create($id, $content, $modal, $time = null)
     {
@@ -22,12 +22,14 @@ class SearchService
             return 0;
         }
 
+        $ts = $time ?: time();
         return DB::table($this->table)
             ->insertGetId([
                 'modal_id' => $modalId,
                 'type_id' => $id,
                 'content' => $content,
-                'created_at' => $time ?: time()
+                'created_at' => $ts,
+                'updated_at' => $ts
             ]);
     }
 
@@ -55,7 +57,8 @@ class SearchService
         return DB::table($this->table)
             ->whereRaw('type_id = ? and modal_id = ?', [$id, $modalId])
             ->update([
-                'content' => $content
+                'content' => $content,
+                'updated_at' => time()
             ]);
     }
 
