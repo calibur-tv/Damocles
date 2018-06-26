@@ -205,6 +205,8 @@ class BangumiController extends Controller
 
             $job = (new \App\Jobs\Push\Baidu('bangumi/' . $bangumi_id, 'del'));
             dispatch($job);
+
+            Redis::DEL('bangumi_'.$bangumi_id);
         }
     }
 
