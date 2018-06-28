@@ -43,8 +43,7 @@ class TrialController extends Controller
 
     public function users()
     {
-        return User::withTrashed()
-            ->where('state', '<>', 0)
+        return User::where('state', '<>', 0)
             ->orderBy('updated_at', 'DESC')
             ->get();
     }
